@@ -1,0 +1,8 @@
+@keyframes blink-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+.animate-blink-soft {
+  animation: blink-soft 1s infinite ease-in-out;
+}

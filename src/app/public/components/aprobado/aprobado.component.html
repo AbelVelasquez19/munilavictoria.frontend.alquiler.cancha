@@ -1,0 +1,95 @@
+<div
+  *ngIf="true"
+  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto"
+>
+
+  <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl animate-fadeInUp overflow-hidden ring-1 ring-black/5">
+
+    <!-- HEADER -->
+    <div class="bg-emerald-600 text-white p-6 flex items-center gap-4">
+      <div class="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+        <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M20 6L9 17l-5-5"></path>
+        </svg>
+      </div>
+
+      <div>
+        <h1 class="text-xl font-semibold">RESERVA CONFIRMADA</h1>
+        <p class="text-white/80 text-sm">
+          Operación Nº {{purchaseNumber}} • {{fechaOperacion}}
+        </p>
+      </div>
+    </div>
+
+    <!-- CUERPO -->
+    <div class="p-6 bg-gray-50">
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- RESPONSABLE -->
+      <div class="mb-5">
+        <h2 class="text-sm font-semibold text-gray-700">RESPONSABLE DE LA RESERVA</h2>
+        <p class="text-lg font-bold text-gray-900 mt-1">{{nombreCompleto}}</p>
+        <p class="text-gray-600 text-sm">DNI: {{dni}} • Cel: {{celular}}</p>
+      </div>
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- DETALLE -->
+      <div class="mb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <div>
+          <p class="text-sm font-semibold text-gray-700">COMPLEJO Y CANCHA</p>
+          <p class="font-medium text-gray-900">{{canchaNombre}}</p>
+          <p class="text-gray-600 text-sm">{{canchaTipo}}</p>
+        </div>
+
+        <div>
+          <p class="text-sm font-semibold text-gray-700">FECHA Y HORARIO</p>
+          <p class="font-medium text-gray-900">{{fechaReserva}}</p>
+          <p class="text-gray-600 text-sm">{{horaInicio}} – {{horaFin}}</p>
+        </div>
+
+      </div>
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- TOTAL -->
+      <div class="mb-5 flex justify-between items-center">
+        <p class="text-sm font-semibold text-gray-700">TOTAL PAGADO</p>
+        <p class="text-2xl font-bold text-blue-700">
+          S/ {{totalPagado | number:'1.2-2'}}
+        </p>
+      </div>
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- CÓDIGO Y QR -->
+      <div class="text-center">
+
+        <p class="text-gray-700 text-sm">Código de Reserva</p>
+        <p class="text-xl font-bold tracking-widest text-gray-900">{{codigoReserva}}</p>
+
+        <div class="mt-4 flex justify-center">
+         <ngx-qrcode-styling [config]="qrConfig"></ngx-qrcode-styling>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-2">
+          Presenta este ticket al administrador del campo.
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="p-4 bg-white flex justify-end gap-3 print:hidden">
+      <button
+        class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow transition"
+        (click)="cerrarModal()">
+        Aceptar
+      </button>
+    </div>
+
+  </div>
+</div>

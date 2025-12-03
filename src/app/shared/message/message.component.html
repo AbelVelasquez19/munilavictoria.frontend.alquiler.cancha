@@ -1,0 +1,43 @@
+<!-- Fondo del modal -->
+<div *ngIf="isVisible" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div
+    class="w-96 rounded-2xl shadow-lg p-6 relative animate-fadeIn"
+    [ngClass]="{
+      'bg-green-100 border border-green-400': type === 'success',
+      'bg-red-100 border border-red-400': type === 'error',
+      'bg-yellow-100 border border-yellow-400': type === 'warning'
+    }"
+  >
+    <!-- Botón cerrar -->
+    <button (click)="close()" class="absolute top-3 right-3 text-gray-600 hover:text-black">
+      ✖
+    </button>
+
+    <!-- Icono -->
+    <div class="flex items-center mb-4">
+      <span *ngIf="type === 'success'" class="text-green-600 text-2xl">✔️</span>
+      <span *ngIf="type === 'error'" class="text-red-600 text-2xl">❌</span>
+      <span *ngIf="type === 'warning'" class="text-yellow-600 text-2xl">⚠️</span>
+      <h2 class="ml-3 text-lg font-bold capitalize">{{ type }}</h2>
+    </div>
+
+    <!-- Mensaje -->
+    <p class="text-gray-700">{{ message }}</p>
+
+    <!-- Botón de acción -->
+    <div class="mt-4 flex justify-end">
+      <button
+        (click)="close()"
+        class="px-4 py-2 rounded-lg text-white font-medium"
+        [ngClass]="{
+          'bg-green-600 hover:bg-green-700': type === 'success',
+          'bg-red-600 hover:bg-red-700': type === 'error',
+          'bg-yellow-600 hover:bg-yellow-700': type === 'warning'
+        }"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+

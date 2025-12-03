@@ -1,0 +1,120 @@
+<!-- HEADER -->
+<header
+  class="bg-white border-b border-gray-200 fixed top-0 left-0 w-full z-50 shadow-sm"
+>
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <!-- LOGO -->
+    <img
+      src="https://web.munilavictoria.gob.pe/mlv/assets/imgs/logo.png"
+      class="h-10 md:h-12 select-none"
+    />
+
+    <!-- ICONOS -->
+    <div class="flex items-center gap-6">
+      <button
+        class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition"
+      >
+        <span class="material-icons text-2xl">help_outline</span>
+        <span class="hidden md:block text-sm font-medium">Ayuda</span>
+      </button>
+
+      <button
+        class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition"
+      >
+        <span class="material-icons text-2xl">shopping_cart</span>
+      </button>
+
+      <button
+        class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition"
+      >
+        <span class="material-icons text-2xl">person</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="pt-24 pb-20 bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4">
+    <!-- Título -->
+    <div class="text-center mb-12 mt-4">
+      <h1
+        class="text-[32px] md:text-[36px] font-semibold text-gray-800 leading-tight"
+      >
+        Reserva tu cancha en línea y vive el deporte en La Victoria
+      </h1>
+
+      <p
+        class="text-gray-500 text-[15px] mt-3 max-w-2xl mx-auto leading-relaxed"
+      >
+        Accede a complejos deportivos renovados y listos para ti. Reserva en
+        segundos y disfruta espacios seguros y modernos para toda la comunidad
+        victoriana.
+      </p>
+    </div>
+
+    <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- CARD -->
+      <div
+        *ngFor="let c of complejos"
+        class="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-all cursor-pointer"
+      >
+        <!-- Imagen -->
+        <div class="h-44 w-full">
+          <img [src]="c.imagen" class="w-full h-full object-cover" />
+        </div>
+        <!-- Info -->
+        <div class="p-5">
+          <!-- Nombre -->
+          <h3 class="text-lg font-semibold text-gray-800">
+            {{ c.nombre }}
+          </h3>
+          <!-- Dirección -->
+          <p class="text-sm text-gray-500 mt-1">
+            <span class="material-icons text-base text-blue-600"
+              >location_on</span
+            >
+            {{ c.direccion }}
+          </p>
+          <!-- Reservar -->
+          <button
+            (click)="abrirRegistrarReserva(c.idComplejo)"
+            class="cursor-pointer mt-4 inline-flex items-center gap-2 px-4 py-2 text-blue-700 font-medium text-sm border border-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all"
+          >
+            <span class="material-icons text-[20px]">event_available</span>
+            Reservar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<!-- FOOTER -->
+<footer class="bg-gray-50 border-t border-gray-200 py-6 mt-12">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <div class="flex justify-center items-center gap-2 text-gray-600">
+      <span class="material-icons text-gray-500 text-base">apartment</span>
+      <span class="font-medium">Municipalidad de La Victoria</span>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-1">
+      © 2025 – Gestión Municipal Deportiva • Todos los derechos reservados.
+    </p>
+  </div>
+</footer>
+
+
+<app-registrar-reserva
+    #modalReserva
+    [abrirModal]="abrirModalRegistrarReserva"
+    [idComplejo]="idComplejoSeleccionado"
+    (cerrar)="cerrarRegistrarReserva()"
+></app-registrar-reserva>
+
+<app-loading *ngIf="isLoading"></app-loading>
+<app-message #msg></app-message>
+
+<!-- <app-aprobado>
+
+</app-aprobado> -->
+<!-- <app-rechazado></app-rechazado> -->

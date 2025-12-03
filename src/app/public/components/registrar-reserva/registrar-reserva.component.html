@@ -1,0 +1,818 @@
+<!-- OVERLAY -->
+<div
+  *ngIf="abrirModal"
+  class="fixed inset-0 bg-black/40 flex items-start justify-center z-50 overflow-y-auto p-4 md:p-20"
+>
+<!-- CONTENEDOR MODAL -->
+<div
+class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl mx-4 overflow-hidden border border-gray-200 animate-fadeInUp"
+>
+<!-- HEADER -->
+<div
+class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
+>
+    <!-- <button type="button" class="bg-amber-300" (click)="pruebaNiubiz()">PRUEBA NIUVIZ</button>
+    <button type="button" class="bg-green-300" (click)="ejecutarCheckout()">PAGAR</button> -->
+
+      <div>
+        <h1 class="text-lg md:text-xl font-semibold">
+          Nueva reserva de cancha
+        </h1>
+        <p class="text-[11px] md:text-xs text-blue-100">
+          Ingresa tus datos y elige el horario para disfrutar tu partido.
+        </p>
+      </div>
+      <div class="absolute top-1 right-5 md:top-15 md:right-90 z-50 border-white border-2 rounded-full">
+        <div
+          class="w-10 h-10 flex items-center justify-center rounded-full text-white font-bold text-[13px] shadow-lg transition-all duration-500"
+          [ngClass]="{
+            'bg-blue-600': timeLeft > 120,
+            'bg-orange-500': timeLeft <= 120 && timeLeft > 60,
+            'bg-red-600 animate-pulse': timeLeft <= 60
+          }"
+        >
+          {{ formatTime(timeLeft) }}
+        </div>
+      </div>
+
+      <!-- Mensaje elegante -->
+      <div class="text-white text-xs leading-none text-right">
+        <p>Tiempo restante</p>
+        <p class="opacity-90">para completar la reserva</p>
+
+        <!-- Submensaje cuando falta poco -->
+        <p
+          *ngIf="timeLeft <= 60"
+          class="text-[11px] text-yellow-300 font-semibold animate-pulse mt-1"
+        >
+          ¡Tu reserva expirará pronto!
+        </p>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="px-6 py-4 bg-gray-50">
+      <!-- GRID PRINCIPAL: LEFT STEPS / RIGHT FORM -->
+      <div class="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-4">
+        <!-- === PROCESO DE RESERVA (LEFT) === -->
+        <aside
+          class="bg-white rounded-xl border border-gray-200 shadow-sm p-3 md:p-4 flex flex-col gap-3"
+        >
+          <h3
+            class="text-xs font-semibold text-gray-500 tracking-wide uppercase mb-1"
+          >
+            Proceso de reserva
+          </h3>
+
+          <!-- Paso 1 -->
+          <button
+            type="button"
+            (click)="pasoActivo = 1"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-lg border text-left transition cursor-pointer"
+            [ngClass]="{
+              'border-blue-600 bg-blue-50 text-blue-700': pasoActivo === 1,
+              'border-gray-200 bg-white text-gray-700 hover:bg-gray-50':
+                pasoActivo !== 1,
+              'pointer-events-none opacity-50 hover:bg-white':
+                pasoActivo === 2 || pasoActivo === 3
+            }"
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="w-6 h-6 flex items-center justify-center rounded-full text-[11px] font-semibold"
+                [ngClass]="
+                  pasoActivo === 1
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                "
+              >
+                1
+              </span>
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold">Mis datos</span>
+                <span class="text-[10px] text-gray-500">
+                  Responsable de la reserva
+                </span>
+              </div>
+            </div>
+            <span class="material-icons text-[16px] text-gray-400"
+              >chevron_right</span
+            >
+          </button>
+
+          <!-- Paso 2 -->
+          <button
+            type="button"
+            (click)="PasoActivoReserva()"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-lg border text-left transition cursor-pointer"
+            [ngClass]="{
+              'border-blue-600 bg-blue-50 text-blue-700': pasoActivo === 2,
+              'border-gray-200 bg-white text-gray-700 hover:bg-gray-50':
+                pasoActivo !== 2,
+              'pointer-events-none opacity-50 hover:bg-white': pasoActivo === 3
+            }"
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="w-6 h-6 flex items-center justify-center rounded-full text-[11px] font-semibold"
+                [ngClass]="
+                  pasoActivo === 2
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                "
+              >
+                2
+              </span>
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold">Seleccionar reserva</span>
+                <span class="text-[10px] text-gray-500">
+                  cancha y horario
+                </span>
+              </div>
+            </div>
+            <span class="material-icons text-[16px] text-gray-400"
+              >chevron_right</span
+            >
+          </button>
+
+          <!-- Paso 3 -->
+          <button
+            type="button"
+            (click)="PasoActivoFinalizar()"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-lg border text-left transition cursor-pointer"
+            [ngClass]="
+              pasoActivo === 3
+                ? 'border-blue-600 bg-blue-50 text-blue-700'
+                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+            "
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="w-6 h-6 flex items-center justify-center rounded-full text-[11px] font-semibold"
+                [ngClass]="
+                  pasoActivo === 3
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                "
+              >
+                3
+              </span>
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold">Finalizar reserva</span>
+                <span class="text-[10px] text-gray-500">
+                  Confirmación y aviso
+                </span>
+              </div>
+            </div>
+            <span class="material-icons text-[16px] text-gray-400"
+              >chevron_right</span
+            >
+          </button>
+        </aside>
+
+        <!-- === CONTENIDO DEL PASO (RIGHT) === -->
+        <section
+          class="bg-white rounded-xl border border-gray-200 shadow-sm px-4 md:px-6 py-4 md:py-5"
+        >
+          <!-- Paso 1: Mis datos -->
+          <div *ngIf="pasoActivo === 1" class="space-y-4">
+            <div class="flex items-center gap-2">
+              <span
+                class="w-7 h-7 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 text-sm"
+              >
+                <span class="material-icons text-[16px]">badge</span>
+              </span>
+              <div>
+                <h3
+                  class="text-xs font-semibold tracking-wide text-blue-900 uppercase"
+                >
+                  Datos del responsable
+                </h3>
+                <p class="text-[11px] text-gray-500">
+                  Completa tus datos para registrar la reserva de cancha.
+                </p>
+              </div>
+            </div>
+
+            <!-- GRID CAMPOS -->
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-1"
+            >
+              <!-- Tipo de Persona -->
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Tipo de Persona
+                </label>
+                <select
+                  [(ngModel)]="tipoPersona"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="01">Persona Natural</option>
+                </select>
+              </div>
+
+              <!-- Tipo de Documento -->
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Tipo de Documento
+                </label>
+                <select
+                  [(ngModel)]="tipoDocumento"
+                  (change)="onTipoDocumentoChange()"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="01">DNI</option>
+                  <option value="04">Carné de extranjería</option>
+                </select>
+              </div>
+
+              <!-- Número Documento -->
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Número de Documento
+                </label>
+                <input
+                  [(ngModel)]="numeroDocumento"
+                  type="text"
+                  [attr.maxlength]="maxLength"
+                  (input)="onNumeroDocumentoInput($event)"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Ingresa tu documento"
+                />
+              </div>
+
+              <!-- Nombre completo / Razón social -->
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Nombre completo
+                </label>
+                <input
+                  [(ngModel)]="nombre"
+                  type="text"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Nombre completo"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Apellido Paterno
+                </label>
+                <input
+                  [(ngModel)]="paterno"
+                  type="text"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Apellido Paterno"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Apellido Materno
+                </label>
+                <input
+                  [(ngModel)]="materno"
+                  type="text"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Apellido Materno"
+                />
+              </div>
+
+              <!-- Correo -->
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Correo electrónico
+                </label>
+                <input
+                  [(ngModel)]="correo"
+                  type="email"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="ejemplo@correo.com"
+                />
+              </div>
+
+              <!-- Celular -->
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Nº Celular
+                </label>
+                <input
+                  [(ngModel)]="telefono"
+                  (input)="onNumeroTelefonoInput($event)"
+                  type="text"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="9 999 999 99"
+                />
+              </div>
+            </div>
+
+            <!-- POLÍTICAS / TÉRMINOS -->
+            <div
+              class="mt-4 border-t border-dashed border-gray-200 pt-3 space-y-2"
+            >
+              <p
+                class="text-[11px] uppercase font-semibold text-gray-500 tracking-wide"
+              >
+                Condiciones de la reserva
+              </p>
+
+              <!-- Acepto Términos y condiciones -->
+              <label
+                class="flex items-start gap-2 text-[11px] text-gray-600 cursor-pointer select-none"
+              >
+                <input
+                  [(ngModel)]="conAcepto"
+                  type="checkbox"
+                  class="mt-0.5 w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  name="aceptaTerminos"
+                />
+                <span>
+                  Acepto
+                  <button
+                    type="button"
+                    class="text-blue-600 font-semibold hover:underline hover:text-blue-700"
+                  >
+                    Términos y condiciones
+                  </button>
+                  del servicio de reserva de canchas.
+                </span>
+              </label>
+
+              <!-- Acepto no responsabilizar a la municipalidad... -->
+              <label
+                class="flex items-start gap-2 text-[11px] text-gray-600 cursor-pointer select-none"
+              >
+                <input
+                  [(ngModel)]="conNoResonsabiliza"
+                  type="checkbox"
+                  class="mt-0.5 w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  name="aceptaResponsabilidad"
+                />
+                <span>
+                  <ng-container
+                    *ngIf="!verMasResponsabilidad; else textoCompleto"
+                  >
+                    Acepto no responsabilizar a la Municipalidad por cualquier
+                    incidente o accidente que pudiera suscitarse durante el uso
+                    de las canchas deportivas por mi persona y mi equipo…
+                    <button
+                      type="button"
+                      (click)="toggleVerMas()"
+                      class="text-blue-600 font-semibold hover:underline hover:text-blue-700"
+                    >
+                      ver más
+                    </button>
+                  </ng-container>
+
+                  <ng-template #textoCompleto>
+                    Acepto no responsabilizar a la Municipalidad por cualquier
+                    incidente o accidente que pudiera suscitarse durante el
+                    alquiler de las canchas deportivas de mi persona y de los
+                    integrantes de mi equipo, comprometiéndome a cumplir las
+                    normas de seguridad, uso adecuado de las instalaciones y
+                    reglamento interno.
+                    <button
+                      type="button"
+                      (click)="toggleVerMas()"
+                      class="text-blue-600 font-semibold hover:underline hover:text-blue-700"
+                    >
+                      ver menos
+                    </button>
+                  </ng-template>
+                </span>
+              </label>
+
+              <!-- Nota pequeña -->
+              <p class="text-[10px] text-gray-400 leading-snug mt-1">
+                Ambas casillas deben estar marcadas para continuar con el
+                proceso de reserva.
+              </p>
+            </div>
+          </div>
+
+          <!-- Paso 2: Seleccionar reserva -->
+          <div *ngIf="pasoActivo === 2" class="space-y-4">
+            <div class="flex items-center justify-between">
+              <!-- IZQUIERDA (lo que ya tienes) -->
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-7 h-7 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 text-sm"
+                >
+                  <span class="material-icons text-[16px]"
+                    >event_available</span
+                  >
+                </span>
+
+                <div>
+                  <h3
+                    class="text-xs font-semibold tracking-wide text-blue-900 uppercase"
+                  >
+                    Seleccione local y horario
+                  </h3>
+                  <p class="text-[11px] text-gray-500">
+                    Elige el complejo deportivo, la cancha y la fecha de tu
+                    reserva.
+                  </p>
+                </div>
+              </div>
+
+              <!-- DERECHA (carrito + total a pagar) -->
+              <div
+                class="flex items-center gap-3 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg"
+              >
+                <span class="material-icons text-blue-600 text-[20px]"
+                  >shopping_cart</span
+                >
+
+                <div class="text-right">
+                  <p
+                    class="text-[11px] text-blue-900 font-semibold leading-none"
+                  >
+                    Total a pagar:
+                  </p>
+                  <p class="text-sm font-bold text-blue-700 leading-none">
+                    S/ {{  totalPagar | number:'1.2-2' }}
+                  </p>
+                  <p class="text-[10px] text-gray-500 leading-none">
+                    {{ horasSeleccionadas.length }} h seleccionadas
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cancha / Fecha -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Elija una cancha
+                </label>
+                <select
+                  [(ngModel)]="canchaSeleccionadaId"
+                  (change)="buscarNuevamenteHorario()"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="0">-- Seleccione --</option>
+                  <option
+                    *ngFor="let item of dataCanchas"
+                    value="{{ item.idCancha }}"
+                  >
+                    {{ item.nombre }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  Fecha de reserva
+                </label>
+                <input
+                  [(ngModel)]="fechaReserva"
+                  (change)="buscarNuevamenteHorario()"
+                  type="date"
+                  class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                  &nbsp;
+                </label>
+                <button
+                  (click)="listarHorarios()"
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-3 py-1.5 rounded-md shadow-md shadow-blue-500/20 transition cursor-pointer animate-blink-soft"
+                >
+                  Consultar horarios
+                </button>
+              </div>
+            </div>
+
+            <!-- HORARIOS -->
+            <div class="mt-4">
+              <!-- Título + leyenda -->
+              <div
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2"
+              >
+                <h4 class="text-xs font-semibold text-gray-700">
+                  Horarios disponibles
+                </h4>
+
+                <!-- Leyenda -->
+                <div class="flex flex-wrap gap-3 text-[11px] text-gray-600">
+                  <span class="inline-flex items-center gap-1">
+                    <span
+                      class="w-3 h-3 rounded-full bg-emerald-500 border border-emerald-600"
+                    ></span>
+                    Disponible
+                  </span>
+                  <span class="inline-flex items-center gap-1">
+                    <span
+                      class="w-3 h-3 rounded-full bg-gray-300 border border-gray-400"
+                    ></span>
+                    Reservado
+                  </span>
+                  <span class="inline-flex items-center gap-1">
+                    <span
+                      class="w-3 h-3 rounded-full bg-amber-400 border border-amber-500"
+                    ></span>
+                    Talleres
+                  </span>
+                </div>
+              </div>
+
+              <!-- Grid de horarios -->
+              <div
+                class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 text-[11px]"
+              >
+                <button
+                  *ngFor="let slot of horarios"
+                  (click)="seleccionarHorario(slot)"
+                  [disabled]="slot.estado !== 'disponible'"
+                  class="px-2 py-1.5 rounded-md border text-center font-medium flex items-center justify-center transition-all duration-150 cursor-pointer"
+                  [ngClass]="{
+                    'border-blue-600 text-blue-700 bg-blue-50 ring-2 ring-blue-400 shadow-sm':
+                      slot.estado === 'disponible' && slot.seleccionado,
+
+                    'border-emerald-500 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 hover:shadow-sm':
+                      slot.estado === 'disponible' && !slot.seleccionado,
+
+                    'border-gray-300 text-gray-400 bg-gray-100 cursor-not-allowed line-through':
+                      slot.estado === 'reservado',
+
+                    'border-amber-400 text-amber-700 bg-amber-50 cursor-not-allowed':
+                      slot.estado === 'taller'
+                  }"
+                >
+                  <span
+                    *ngIf="slot.estado === 'taller'"
+                    class="material-icons text-[14px] mr-1"
+                    >school</span
+                  >
+                  <span
+                    *ngIf="slot.estado === 'reservado'"
+                    class="material-icons text-[14px] mr-1"
+                    >lock</span
+                  >
+
+                  {{ slot.rango }}
+                </button>
+                <div
+                  *ngIf="horarios.length === 0"
+                  class="col-span-full text-center text-gray-500"
+                >
+                  No hay horarios disponibles para la fecha seleccionada.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paso 3: Finalizar reserva -->
+          <div *ngIf="pasoActivo === 3" class="space-y-4">
+            <!-- Encabezado -->
+            <div class="flex items-center gap-2">
+              <span
+                class="w-7 h-7 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 text-sm"
+              >
+                <span class="material-icons text-[16px]">check_circle</span>
+              </span>
+              <div>
+                <h3
+                  class="text-xs font-semibold tracking-wide text-blue-900 uppercase"
+                >
+                  Finalizar reserva
+                </h3>
+                <p class="text-[11px] text-gray-500">
+                  Revisa el resumen de tu reserva antes de continuar con el
+                  pago.
+                </p>
+              </div>
+            </div>
+
+            <!-- Aviso importante -->
+            <div
+              class="border border-dashed border-blue-200 rounded-lg p-3 bg-blue-50 text-[12px] text-gray-700"
+            >
+              <p class="mb-1">
+                <span class="font-semibold text-gray-900">IMPORTANTE:</span>
+                Presenta en cancha el detalle de la reserva con el código QR que
+                recibirás en tu correo.
+              </p>
+              <p class="text-[11px] text-red-500 mt-2">
+                ¡No cierres esta ventana mientras se procesa tu pago!
+              </p>
+            </div>
+
+            <div
+              class="border border-gray-200 rounded-2xl p-4 bg-white shadow-sm space-y-6"
+            >
+              <!-- RESPONSABLE -->
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shadow-sm"
+                  >
+                    <span class="material-icons text-[20px]">person</span>
+                  </div>
+
+                  <div>
+                    <p
+                      class="text-[10px] uppercase font-semibold text-gray-600 tracking-wide"
+                    >
+                      Responsable de la reserva
+                    </p>
+                    <p class="text-[13px] font-semibold text-gray-900">
+                      {{ resumenReserva.nombreAdministrado }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="text-right text-[11px] text-gray-600 leading-tight">
+                  <p>
+                    <span class="font-semibold text-gray-700">DNI:</span>
+                    {{ resumenReserva.numeroDocumento }}
+                  </p>
+                  <p>
+                    <span class="font-semibold text-gray-700">Cel:</span>
+                    {{ resumenReserva.celular }}
+                  </p>
+                </div>
+              </div>
+
+              <hr class="border-gray-100" />
+
+              <!-- INFORMACIÓN PRINCIPAL -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- COMPLEJO -->
+                <div class="space-y-1">
+                  <p
+                    class="text-[10px] uppercase font-semibold text-gray-600 tracking-wide"
+                  >
+                    Complejo y cancha
+                  </p>
+
+                  <div class="flex items-start gap-2">
+                    <span class="material-icons text-blue-500 text-[18px]"
+                      >location_on</span
+                    >
+                    <div>
+                      <p class="text-[13px] font-semibold text-gray-900">
+                        {{ resumenReserva.complejo }}
+                      </p>
+                      <p class="text-[11px] text-gray-600">
+                        {{ resumenReserva.cancha }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- FECHA & HORARIOS -->
+                <div class="space-y-1">
+                  <p
+                    class="text-[10px] uppercase font-semibold text-gray-600 tracking-wide"
+                  >
+                    Fecha y horarios
+                  </p>
+
+                  <div class="flex items-center gap-2">
+                    <span class="material-icons text-blue-500 text-[18px]"
+                      >event</span
+                    >
+                    <p class="text-[13px] font-semibold text-gray-900">
+                      {{ resumenReserva.fechaReserva }}
+                    </p>
+                  </div>
+
+                  <div class="space-y-0.5 pl-6">
+                    <div
+                      *ngFor="let h of resumenReserva.detalles"
+                      class="flex items-center justify-between text-[12px]"
+                    >
+                      <p class="text-gray-700">
+                        • <span class="font-medium">{{ h.rango }}</span>
+                      </p>
+                      <p class="font-semibold text-blue-700">
+                        S/ {{ h.precio | number:'1.2-2' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="border-gray-100" />
+
+              <!-- TOTAL A PAGAR -->
+              <div
+                class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+              >
+                <div
+                  class="text-[12px] text-gray-700 leading-tight flex items-start gap-2"
+                >
+                  <span class="material-icons text-blue-600 text-[18px]"
+                    >receipt_long</span
+                  >
+
+                  <div>
+                    <p
+                      class="uppercase text-[10px] font-semibold text-gray-800 tracking-wide"
+                    >
+                      Resumen de pago
+                    </p>
+                    <p>
+                      Horas reservadas:
+                      <span class="font-semibold text-gray-900">
+                        {{ resumenReserva.cantidadHoras }} h
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="text-right">
+                  <p class="text-[10px] uppercase text-gray-500 tracking-wide">
+                    Total a pagar
+                  </p>
+
+                  <p
+                    class="text-[22px] font-extrabold text-blue-700 leading-none"
+                  >
+                    S/ {{  resumenReserva.montoTotal | number:'1.2-2' }}
+                  </p>
+
+                  <p class="text-[10px] text-gray-500 mt-0.5">
+                    Pago seguro con tarjeta a través de nuestra pasarela.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botón de pago Niubiz -->
+            <div class="flex justify-end">
+              <!-- cancelar reserva -->
+              <button
+                (click)="cancelarReserva()"
+                class="inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-medium px-4 py-2 rounded-lg border border-red-300 transition shadow-sm cursor-pointer mr-3"
+              >
+                <span class="material-icons text-[18px]">cancel</span>
+                Cancelar reserva
+              </button>
+
+              <!-- button cancelar  reserva -->
+              <button
+                (click)="volverAmodificarReserva()"
+                class="inline-flex items-center gap-2 bg-red-100 hover:bg-gray-200 text-red-700 text-sm font-medium px-4 py-2 rounded-lg shadow-md shadow-gray-300/20 transition cursor-pointer mr-3"
+              >
+                <span class="material-icons text-[16px]">arrow_back</span>
+                modificar reserva
+              </button>
+              <button
+                (click)="ejecutarCheckout()"
+                class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-md shadow-blue-500/20 transition cursor-pointer"
+              >
+                <!-- (click)="onPagarNiubiz()" -->
+                <span class="material-icons text-[16px]">credit_card</span>
+                Proceder al pago
+                <span class="text-[11px] bg-white/10 px-2 py-0.5 rounded-full">
+                  Pasarela segura
+                </span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div
+      *ngIf="footerDisabled === false"
+      class="flex justify-between items-center border-t px-6 py-2.5 bg-white"
+    >
+      <button
+        (click)="cerrarModal()"
+        class="flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition shadow-sm cursor-pointer"
+      >
+        <span class="material-icons text-[16px]">close</span>
+        Cancelar
+      </button>
+
+      <div class="flex gap-2">
+        <button
+          type="button"
+          (click)="pasoActivo = pasoActivo - 1"
+          [disabled]="pasoActivo === 1"
+          class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+        >
+          <span class="material-icons text-[16px]">chevron_left</span>
+          Atrás
+        </button>
+        <button
+          type="button"
+          (click)="clickSiguentePaso()"
+          class="flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-semibold transition shadow-sm cursor-pointer bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <span class="material-icons text-[16px]">
+            {{ pasoActivo < 3 ? "chevron_right" : "save" }}
+          </span>
+          {{ pasoActivo < 3 ? "Siguiente" : "Guardar" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading *ngIf="isLoading"></app-loading>
+<app-message #msg></app-message>

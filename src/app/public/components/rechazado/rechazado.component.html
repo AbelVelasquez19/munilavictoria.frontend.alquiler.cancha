@@ -1,0 +1,81 @@
+<div
+  *ngIf="true"
+  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto"
+>
+
+  <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl animate-fadeInUp overflow-hidden ring-1 ring-black/5">
+
+    <!-- HEADER -->
+    <div class="bg-red-600 text-white p-6 flex items-center gap-4">
+      <div class="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+        <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </div>
+
+      <div>
+        <h1 class="text-xl font-semibold">PAGO RECHAZADO</h1>
+        <p class="text-white/80 text-sm">
+          Operación Nº {{purchaseNumber}} • {{fechaOperacion}}
+        </p>
+      </div>
+    </div>
+
+    <!-- CUERPO -->
+    <div class="p-6 bg-gray-50">
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- MOTIVO -->
+      <div class="mb-5">
+        <h2 class="text-sm font-semibold text-gray-700">MOTIVO DEL RECHAZO</h2>
+        <p class="text-lg font-bold text-red-700 mt-1">{{motivoRechazo}}</p>
+
+        <div class="text-sm text-gray-600 mt-2 space-y-1">
+          <p><strong>Código:</strong> {{visaCodigo}}</p>
+          <p><strong>Autorización:</strong> {{visaAutorizacion}}</p>
+          <p><strong>Traza:</strong> {{visaTraza}}</p>
+        </div>
+      </div>
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- MONTO -->
+      <div class="mb-5 flex justify-between items-center">
+        <p class="text-sm font-semibold text-gray-700">MONTO INTENTADO</p>
+        <p class="text-2xl font-bold text-red-700">
+          S/ {{totalPagado | number:'1.2-2'}}
+        </p>
+      </div>
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- RECOMENDACIONES -->
+      <div class="text-sm text-gray-700 space-y-2">
+        <p>• Verifique que su tarjeta tenga saldo disponible.</p>
+        <p>• Asegure que esté habilitada para compras online.</p>
+        <p>• Revise los datos ingresados o intente nuevamente.</p>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="p-4 bg-white flex justify-end gap-3 print:hidden">
+
+      <button
+        class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-gray-800 rounded-lg shadow transition"
+        (click)="cerrarModal()">
+        Cerrar
+      </button>
+
+      <button
+        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition"
+        (click)="reintentarPago()">
+        Reintentar
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
