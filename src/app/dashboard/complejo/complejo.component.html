@@ -1,0 +1,151 @@
+<div class="mb-8">
+  <h2 class="text-3xl font-extrabold text-gray-800 tracking-tight">
+   Administrar canchas deportivas
+  </h2>
+  <p class="text-gray-500 mt-1 text-sm">
+    Aquí podrás administrar la información de las canchas deportivas.
+  </p>
+</div>
+
+<div
+  class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 overflow-x-auto"
+>
+  <!-- BUSCADOR / ACCIONES -->
+  <div
+    class="flex flex-col sm:flex-row sm:justify-end sm:items-center gap-2 mb-4"
+  >
+    <input
+      type="text"
+      placeholder="Nombre del estudiante"
+      class="w-full sm:w-64 text-sm text-gray-700 px-3 py-2 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+    />
+
+    <button
+      class="flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded-lg shadow-sm transition cursor-pointer"
+    >
+      <span class="material-icons text-sm">search</span>
+      Buscar
+    </button>
+
+    <button
+      class="flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded-lg shadow-sm transition cursor-pointer"
+    >
+      <span class="material-icons text-sm">person_add</span>
+      Nuevo Complejo
+    </button>
+  </div>
+</div>
+
+<div
+  class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 overflow-x-auto mt-3"
+>
+
+  <!-- TABLA -->
+<div class="sm:mx-0 overflow-x-auto sm:overflow-visible w-105 md:w-full ">
+  <table class="min-w-[680px] sm:min-w-full border-collapse text-xs sm:text-sm">
+    <thead>
+      <tr class="bg-blue-100 text-blue-900 text-[11px] sm:text-xs uppercase">
+        <th class="px-3 py-1 text-center">Acciones</th>
+        <th class="px-3 py-1 text-left">Código</th>
+        <th class="px-3 py-1 text-left">Documento</th>
+        <th class="px-3 py-1 text-left">Nombres</th>
+        <th class="px-3 py-1 text-left whitespace-nowrap">
+          Fecha Nacimiento
+        </th>
+        <th class="px-3 py-1 text-left">Seguro</th>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-gray-200">
+      <!-- FILA 1 -->
+      <tr class="hover:bg-blue-50 transition cursor-pointer">
+        <td class="px-3 py-0.5 text-center">
+          <div class="inline-flex items-center gap-1">
+            <button
+              class="w-6 h-6 flex items-center justify-center rounded border border-blue-300 text-blue-600 hover:bg-blue-50 cursor-pointer"
+              title="Editar"
+            >
+              <span class="material-icons text-[13px]">edit</span>
+            </button>
+            <button
+              class="w-6 h-6 flex items-center justify-center rounded border border-red-300 text-red-600 hover:bg-red-50 cursor-pointer"
+              title="Eliminar"
+            >
+              <span class="material-icons text-[13px]">delete</span>
+            </button>
+          </div>
+        </td>
+        <td class="px-3 py-0.5">0002</td>
+        <td class="px-3 py-0.5">63525854</td>
+        <td class="px-3 py-0.5 font-medium whitespace-nowrap">
+          Juan Vásquez
+        </td>
+        <td class="px-3 py-0.5 whitespace-nowrap">07/04/2005</td>
+        <td class="px-3 py-0.5">ID</td>
+      </tr>
+
+      <tr class="hover:bg-blue-50 transition cursor-pointer">
+        <td class="px-3 py-0.5 text-center">
+          <div class="inline-flex items-center gap-1">
+            <button
+              class="w-6 h-6 flex items-center justify-center rounded border border-blue-300 text-blue-600 hover:bg-blue-50 cursor-pointer"
+              title="Editar"
+            >
+              <span class="material-icons text-[13px]">edit</span>
+            </button>
+            <button
+              class="w-6 h-6 flex items-center justify-center rounded border border-red-300 text-red-600 hover:bg-red-50 cursor-pointer"
+              title="Eliminar"
+            >
+              <span class="material-icons text-[13px]">delete</span>
+            </button>
+          </div>
+        </td>
+        <td class="px-3 py-0.5">0002</td>
+        <td class="px-3 py-0.5">63525854</td>
+        <td class="px-3 py-0.5 font-medium whitespace-nowrap">
+          Juan Vásquez
+        </td>
+        <td class="px-3 py-0.5 whitespace-nowrap">07/04/2005</td>
+        <td class="px-3 py-0.5">ID</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- PAGINACIÓN -->
+<div class="flex justify-between items-center mt-3">
+  <p class="text-xs text-gray-500">Mostrando 12 - 12 de 100</p>
+
+  <div class="flex items-center gap-1 text-xs">
+    <button
+      class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded bg-gray-100 hover:bg-gray-200 cursor-pointer"
+    >
+      <span class="material-icons text-[14px]">chevron_left</span>
+    </button>
+
+    <button
+      class="w-7 h-7 flex items-center justify-center border border-blue-600 rounded bg-blue-600 text-white font-medium cursor-pointer"
+    >
+      1
+    </button>
+    <button
+      class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded bg-white hover:bg-gray-100 cursor-pointer"
+    >
+      2
+    </button>
+    <button
+      class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded bg-white hover:bg-gray-100 cursor-pointer"
+    >
+      3
+    </button>
+
+    <button
+      class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded bg-gray-100 hover:bg-gray-200 cursor-pointer"
+    >
+      <span class="material-icons text-[14px]">chevron_right</span>
+    </button>
+  </div>
+</div>
+
+</div>
+

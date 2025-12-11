@@ -1,5 +1,7 @@
 import { DecimalPipe, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { IPagoRechazadoResponse } from '../../../core/interfaz/pago';
 
 @Component({
   selector: 'app-rechazado',
@@ -8,29 +10,19 @@ import { Component } from '@angular/core';
   styleUrl: './rechazado.component.css'
 })
 export class RechazadoComponent {
-  // Para mostrar el modal
-  VisaStatus: number = 2;
+  @Input() visible: string = '';
+  @Input() estado: string = '';
+  @Input() token: string = '';
+  @Input() dataPagoRechazado: IPagoRechazadoResponse | null = null;
+  @Output() cerrar = new EventEmitter<void>();
+  
+  constructor(private router: Router) {}
 
-  // Datos generales del intento de pago
-  purchaseNumber: string = '1039165';
-  fechaOperacion: string = '2025-12-02 15:50';
-  totalPagado: number = 15.00;
-
-  // Motivo del rechazo (del backend Niubiz)
-  motivoRechazo: string = 'Not Authorized';
-  visaCodigo: string = '400';
-  visaAutorizacion: string = '000000';
-  visaTraza: string = '8f4af95f-f6b6-42d5-9ffb-43e1...';
-
-  constructor() {}
-
-  cerrarModal() {
-    this.VisaStatus = 0;
-  }
-
-  // Acción para reintentar pago
-  reintentarPago() {
-    // Aquí redireccionas al módulo donde se inicia el checkout
-    window.location.href = '/dashboard/estado-cuenta';
+  public cerrarModal() {
+    this.cerrar.emit();
+    this.router.navigate(['/']);
+    this.estado = '';
+    this.token = '';
+    this.dataPagoRechazado = null;
   }
 }

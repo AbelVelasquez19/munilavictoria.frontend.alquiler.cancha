@@ -1,5 +1,5 @@
 <div
-  *ngIf="true"
+  *ngIf="visible"
   class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto"
 >
 
@@ -16,7 +16,7 @@
       <div>
         <h1 class="text-xl font-semibold">PAGO RECHAZADO</h1>
         <p class="text-white/80 text-sm">
-          Operación Nº {{purchaseNumber}} • {{fechaOperacion}}
+          Operación Nº {{ dataPagoRechazado?.purchaseNumber }} • {{ dataPagoRechazado?.authRaw?.data?.TRANSACTION_DATE }}
         </p>
       </div>
     </div>
@@ -24,28 +24,44 @@
     <!-- CUERPO -->
     <div class="p-6 bg-gray-50">
 
+      <p class="text-xs text-gray-500 mb-4 italic">
+        Este detalle también fue enviado a su correo electrónico.
+      </p>
+
       <div class="border-t border-dashed border-gray-400 mb-5"></div>
 
       <!-- MOTIVO -->
       <div class="mb-5">
         <h2 class="text-sm font-semibold text-gray-700">MOTIVO DEL RECHAZO</h2>
-        <p class="text-lg font-bold text-red-700 mt-1">{{motivoRechazo}}</p>
 
-        <div class="text-sm text-gray-600 mt-2 space-y-1">
-          <p><strong>Código:</strong> {{visaCodigo}}</p>
-          <p><strong>Autorización:</strong> {{visaAutorizacion}}</p>
-          <p><strong>Traza:</strong> {{visaTraza}}</p>
+        <p class="text-lg font-bold text-red-700 mt-1">
+          {{ dataPagoRechazado?.authRaw?.errorMessage }}
+        </p>
+
+        <div class="text-sm text-gray-700 mt-2 space-y-1">
+          <p><strong>Código:</strong> {{ dataPagoRechazado?.authRaw?.data?.ACTION_CODE }}</p>
+          <p><strong>Descripción:</strong> {{ dataPagoRechazado?.authRaw?.data?.ACTION_DESCRIPTION }}</p>
+          <p><strong>Autorización:</strong> {{dataPagoRechazado?.authRaw?.data?.ECI_DESCRIPTION}}</p>
+          <p><strong>Traza:</strong> {{dataPagoRechazado?.authRaw?.data?.TRACE_NUMBER}}</p>
         </div>
       </div>
 
       <div class="border-t border-dashed border-gray-400 mb-5"></div>
 
       <!-- MONTO -->
-      <div class="mb-5 flex justify-between items-center">
-        <p class="text-sm font-semibold text-gray-700">MONTO INTENTADO</p>
-        <p class="text-2xl font-bold text-red-700">
-          S/ {{totalPagado | number:'1.2-2'}}
-        </p>
+      <div class="mb-5">
+        <h2 class="text-sm font-semibold text-gray-700">DETALLE DEL PAGO</h2>
+
+        <div class="flex justify-between items-center mt-2">
+          <p class="text-gray-600 text-sm">Monto intentado:</p>
+          <p class="text-2xl font-bold text-red-700">
+            S/ {{ dataPagoRechazado?.amount| number:'1.2-2' }}
+          </p>
+        </div>
+
+        <div class="mt-3 text-sm text-gray-700">
+          <p><strong>Tarjeta:</strong> {{ dataPagoRechazado?.authRaw?.data?.BRAND }} — {{ dataPagoRechazado?.authRaw?.data?.CARD }}</p>
+        </div>
       </div>
 
       <div class="border-t border-dashed border-gray-400 mb-5"></div>
@@ -55,27 +71,21 @@
         <p>• Verifique que su tarjeta tenga saldo disponible.</p>
         <p>• Asegure que esté habilitada para compras online.</p>
         <p>• Revise los datos ingresados o intente nuevamente.</p>
+        <p>• Si el problema persiste, comuníquese con su banco.</p>
       </div>
 
     </div>
 
     <!-- FOOTER -->
-    <div class="p-4 bg-white flex justify-end gap-3 print:hidden">
+    <div class="p-4 bg-white flex justify-end gap-3">
 
       <button
-        class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-gray-800 rounded-lg shadow transition"
-        (click)="cerrarModal()">
+        class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-gray-800 rounded-lg shadow transition cursor-pointer"
+        (click)="cerrarModal()"
+      >
         Cerrar
       </button>
 
-      <button
-        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition"
-        (click)="reintentarPago()">
-        Reintentar
-      </button>
-
     </div>
-
   </div>
 </div>
-

@@ -3,15 +3,15 @@
   *ngIf="abrirModal"
   class="fixed inset-0 bg-black/40 flex items-start justify-center z-50 overflow-y-auto p-4 md:p-20"
 >
-<!-- CONTENEDOR MODAL -->
-<div
-class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl mx-4 overflow-hidden border border-gray-200 animate-fadeInUp"
->
-<!-- HEADER -->
-<div
-class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
->
-    <!-- <button type="button" class="bg-amber-300" (click)="pruebaNiubiz()">PRUEBA NIUVIZ</button>
+  <!-- CONTENEDOR MODAL -->
+  <div
+    class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl mx-4 overflow-hidden border border-gray-200 animate-fadeInUp"
+  >
+    <!-- HEADER -->
+    <div
+      class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
+    >
+      <!-- <button type="button" class="bg-amber-300" (click)="pruebaNiubiz()">PRUEBA NIUVIZ</button>
     <button type="button" class="bg-green-300" (click)="ejecutarCheckout()">PAGAR</button> -->
 
       <div>
@@ -22,7 +22,9 @@ class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
           Ingresa tus datos y elige el horario para disfrutar tu partido.
         </p>
       </div>
-      <div class="absolute top-1 right-5 md:top-15 md:right-90 z-50 border-white border-2 rounded-full">
+      <div
+        class="absolute top-1 right-5 md:top-15 md:right-90 z-50 border-white border-2 rounded-full"
+      >
         <div
           class="w-10 h-10 flex items-center justify-center rounded-full text-white font-bold text-[13px] shadow-lg transition-all duration-500"
           [ngClass]="{
@@ -429,7 +431,7 @@ class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
                     Total a pagar:
                   </p>
                   <p class="text-sm font-bold text-blue-700 leading-none">
-                    S/ {{  totalPagar | number:'1.2-2' }}
+                    S/ {{ totalPagar | number : "1.2-2" }}
                   </p>
                   <p class="text-[10px] text-gray-500 leading-none">
                     {{ horasSeleccionadas.length }} h seleccionadas
@@ -466,6 +468,8 @@ class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
                 <input
                   [(ngModel)]="fechaReserva"
                   (change)="buscarNuevamenteHorario()"
+                  [min]="minDate"
+                  [max]="maxDate"
                   type="date"
                   class="w-full px-3 py-1.5 rounded-md border border-gray-300 bg-white text-sm focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -513,6 +517,12 @@ class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
                     ></span>
                     Talleres
                   </span>
+                  <span class="inline-flex items-center gap-1">
+                    <span
+                      class="w-3 h-3 rounded-full bg-red-400 border border-red-500"
+                    ></span>
+                    Vencido
+                  </span>
                 </div>
               </div>
 
@@ -534,6 +544,9 @@ class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
 
                     'border-gray-300 text-gray-400 bg-gray-100 cursor-not-allowed line-through':
                       slot.estado === 'reservado',
+                      
+                    'border-red-500 text-red-700 bg-red-50 cursor-not-allowed line-through':
+                      slot.estado === 'vencido',
 
                     'border-amber-400 text-amber-700 bg-amber-50 cursor-not-allowed':
                       slot.estado === 'taller'
@@ -687,7 +700,7 @@ class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
                         • <span class="font-medium">{{ h.rango }}</span>
                       </p>
                       <p class="font-semibold text-blue-700">
-                        S/ {{ h.precio | number:'1.2-2' }}
+                        S/ {{ h.precio | number : "1.2-2" }}
                       </p>
                     </div>
                   </div>
@@ -730,7 +743,7 @@ class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
                   <p
                     class="text-[22px] font-extrabold text-blue-700 leading-none"
                   >
-                    S/ {{  resumenReserva.montoTotal | number:'1.2-2' }}
+                    S/ {{ resumenReserva.montoTotal | number : "1.2-2" }}
                   </p>
 
                   <p class="text-[10px] text-gray-500 mt-0.5">
@@ -741,29 +754,32 @@ class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
             </div>
 
             <!-- Botón de pago Niubiz -->
-            <div class="flex justify-end">
+            <div
+              class="flex flex-col md:flex-row justify-end md:items-center gap-3"
+            >
               <!-- cancelar reserva -->
               <button
                 (click)="cancelarReserva()"
-                class="inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-medium px-4 py-2 rounded-lg border border-red-300 transition shadow-sm cursor-pointer mr-3"
+                class="inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-medium px-4 py-2 rounded-lg border border-red-300 transition shadow-sm cursor-pointer w-full md:w-auto"
               >
                 <span class="material-icons text-[18px]">cancel</span>
                 Cancelar reserva
               </button>
 
-              <!-- button cancelar  reserva -->
+              <!-- button modificar reserva -->
               <button
                 (click)="volverAmodificarReserva()"
-                class="inline-flex items-center gap-2 bg-red-100 hover:bg-gray-200 text-red-700 text-sm font-medium px-4 py-2 rounded-lg shadow-md shadow-gray-300/20 transition cursor-pointer mr-3"
+                class="inline-flex items-center gap-2 bg-red-100 hover:bg-gray-200 text-red-700 text-sm font-medium px-4 py-2 rounded-lg shadow-md shadow-gray-300/20 transition cursor-pointer w-full md:w-auto"
               >
                 <span class="material-icons text-[16px]">arrow_back</span>
-                modificar reserva
+                Modificar reserva
               </button>
+
+              <!-- Proceder al pago -->
               <button
                 (click)="ejecutarCheckout()"
-                class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-md shadow-blue-500/20 transition cursor-pointer"
+                class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-md shadow-blue-500/20 transition cursor-pointer w-full md:w-auto"
               >
-                <!-- (click)="onPagarNiubiz()" -->
                 <span class="material-icons text-[16px]">credit_card</span>
                 Proceder al pago
                 <span class="text-[11px] bg-white/10 px-2 py-0.5 rounded-full">

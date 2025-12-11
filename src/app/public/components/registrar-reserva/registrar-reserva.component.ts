@@ -56,7 +56,7 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
   paterno: string = 'velasquez';
   materno: string = 'villafranca';
   telefono: string = '922355307';
-  correo: string = 'abel@gmail.com';
+  correo: string = 'abel.velasquez1997@gmail.com';
   conAcepto: Boolean = false;
   conNoResonsabiliza: Boolean = false;
 
@@ -88,12 +88,11 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-
+    this.establecerRangoDeFechas();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['idComplejo']) {
-      console.log("ID recibido del padre:", this.idComplejo);
       this.listarCanchasCbo(this.idComplejo);
     }
   }
@@ -153,14 +152,11 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     this.comAdminService.registrarComplejoAdministrador(payload).subscribe({
       next: (response: ComplejoAdminResponse) => {
         this.isLoading = false;
-        console.log(response);
         if (response.status !== 'success') {
           this.msg.show(response.message, 'error');
           return;
         }
-        /* this.msg.show('Administrador registrado exitosamente.','success'); */
         this.idAdministrado = response.data.idAdministrado;
-        console.log('ID Administrador:', this.idAdministrado);
         this.pasoActivo = 2;
         this.activeStep = 'reserva';
 
@@ -294,7 +290,6 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     this.horarioService.listarHorariosCancha(payload).subscribe({
       next: (response: IHorariosResponse) => {
         this.isLoading = false;
-        console.log(response.data[0].status);
         if (response.status !== 'success') {
           this.msg.show('Error al listar los horarios.', 'error');
           this.horarios = [];
@@ -305,10 +300,12 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
           this.horarios = [];
           return;
         }
+        console.log("corregiendo horrario vencido");
+        console.log(response.data);
         this.horarios = response.data.map((item: any) => ({
           id: item.idHorarioBase,
           rango: item.rango,
-          estado: item.estado === 'disponible' ? 'disponible' : (item.estado === 'reservado' ? 'reservado' : 'taller'),
+          estado: item.estado === 'disponible' ? 'disponible' : (item.estado === 'reservado' ? 'reservado' : (item.estado === 'vencido' ? 'vencido' : 'taller')),
           seleccionado: false
         }));
       },
@@ -380,7 +377,6 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
           this.horasSeleccionadas = this.horasSeleccionadas.filter(h => h.id !== slot.id);
           return;
         }
-        console.log(response.detalles)
         this.agregarDatataTarifa(response.detalles);
       },
       error: (error) => {
@@ -423,7 +419,6 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     this.reservaService.registrarReserva(payload).subscribe({
       next: (response: IReservaRegistrarResponse) => {
         this.isLoading = false;
-        console.log(response);
         if (response.status !== 1) {
           this.listarHorarios();
           this.horasSeleccionadas = [];
@@ -435,7 +430,7 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
         this.idReserva = response.idReserva;
         this.detalleReserva(response.idReserva);
         this.generateSessionToken();
-        this.startTimer();
+        /* this.startTimer(); */
         this.pasoActivo = 3;
         this.footerDisabled = true;
       },
@@ -585,20 +580,46 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     });
   }
 
-  timeLeft: number = 150; // 5 minutos = 300 segundos
+  timeLeft: number = 300; // 5 minutos = 300 segundos
   interval: any;
 
   startTimer() {
     clearInterval(this.interval);
-    this.timeLeft = 150;
+    this.timeLeft = 300;
 
     this.interval = setInterval(() => {
       this.timeLeft--;
 
       if (this.timeLeft <= 0) {
         this.cancelarPorTimeout();
+        this.cerrarModalNiubizUniversal();
       }
     }, 1000);
+  }
+
+  cerrarModalNiubizUniversal() {
+    const iframes = document.querySelectorAll("iframe");
+
+    let encontrado = false;
+
+    iframes.forEach((iframe: HTMLIFrameElement) => {
+      const style = window.getComputedStyle(iframe);
+
+      const esModal =
+        style.position === "fixed" ||
+        style.position === "absolute" ||
+        parseInt(style.zIndex) > 1000;
+
+      if (esModal) {
+        iframe.remove();
+        encontrado = true;
+        console.log(" Modal Niubiz eliminado (universal match).");
+      }
+    });
+
+    if (!encontrado) {
+      console.warn(" No se detectó iframe de Niubiz.");
+    }
   }
 
   cancelarPorTimeout() {
@@ -639,10 +660,8 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     this.reservaService.liberarReservaExpirada().subscribe({
       next: (response: IReservarLiberarReservaExpirdaResponse) => {
         if (response.status !== 1) {
-          console.log('Error al liberar reservas expiradas:', response.message);
           return;
         }
-        /* console.log('correcto: ', response.message); */
       },
       error: (error) => {
         console.error('Error al liberar reservas expiradas:', error);
@@ -656,7 +675,6 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     }
     this.visa.obtenerNumeroCompra(obj).subscribe({
       next: (res: any) => {
-        console.log(res);
         if (res.status = "success") {
           this.numeroCompra = res.data
         } else {
@@ -681,14 +699,8 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     return `${mm}:${ss < 10 ? '0' + ss : ss}`;
   }
 
-
-  /*  public pruebaNiubiz(){
-     
-     this.generateSessionToken();
-   } */
-
-
   public generateSessionToken() {
+    this.isLoading = true;
     const payload = {
       amount: parseFloat(this.totalPagar.toString()),
       purchaseNumber: this.numeroCompra.purchaseNumber,
@@ -697,10 +709,11 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     };
     this.visa.generarSessionToken(payload).subscribe({
       next: (response: any) => {
+        this.isLoading = false;
         this.sessionToken = response.sessionToken;
-        console.log("SESSION TOKEN:", this.sessionToken);
       },
       error: (error) => {
+        this.isLoading = false;
         this.msg.show('Error al obtener el session token.', 'error');
       }
     });
@@ -711,13 +724,13 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
       this.msg.show('No se ha generado el session token intenta nuevamente.', 'error');
       return;
     }
-    
+
     if (!this.numeroCompra || !this.numeroCompra.purchaseNumber) {
       this.msg.show('No se ha obtenido el número de compra.', 'error');
       return;
     }
-    
-    if(this.dataTarifa[0].codTasa == undefined || this.dataTarifa[0].codTasa == null || this.dataTarifa[0].codTasa == ''){
+
+    if (this.dataTarifa[0].codTasa == undefined || this.dataTarifa[0].codTasa == null || this.dataTarifa[0].codTasa == '') {
       this.msg.show('No se ha obtenido la tasa de la tarifa comunicar con el administrador.', 'error');
       return;
     }
@@ -729,19 +742,17 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
       merchantid: environment.merchantId,
       purchasenumber: this.numeroCompra.purchaseNumber,
       amount: parseFloat(this.totalPagar.toString()),
-      expirationminutes: '20',
-      timeouturl: 'about:blank',
-      merchantlogo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzTo_xqutQBaVtbsOG4mduVSz2QEG7GN7tBA&s',
+      expirationminutes: '5',
+      timeouturl: 'http://172.16.201.248:4500/inicio',
+      merchantlogo: 'https://web.munilavictoria.gob.pe/mlv/assets/imgs/logo.png',
       formbuttoncolor: '#0a5bd3',
-      action: `${environment.apiUrl}/niubiz/response-form?purchasenumber=${this.numeroCompra.purchaseNumber}&codigo=${this.resumenReserva.codigo}&idReserva=${this.idReserva}&descripcion=${this.resumenReserva.cancha}&tasa=${this.dataTarifa[0].codTasa}`,
+      action: `${environment.apiUrl}/niubiz/response-form?purchasenumber=${this.numeroCompra.purchaseNumber}&codigo=${this.resumenReserva.codigo}&idReserva=${this.idReserva}&descripcion=${this.resumenReserva.cancha}&tasa=${this.dataTarifa[0].codTasa}&correo=${this.correo}`,
       complete: function (params: any) {
-        console.log('Pago completado:', params);
         alert('Pago completado: ' + JSON.stringify(params));
-      },
+      }
     });
     (window as any).VisanetCheckout.open();
   }
-
 
   private registrarLog(sessionToken: string) {
     const log: LogVisa = {
@@ -754,12 +765,12 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
       visa_url: environment.checkoutJs,
       visa_merchant_id: environment.merchantId,
       sesion_visa: sessionToken,
-      data:{},
+      data: {},
       resumen: {
-        codigo:  this.resumenReserva.codigo,
+        codigo: this.resumenReserva.codigo,
         amount: Number(this.totalPagar),
         total_deuda: Number(this.totalPagar),
-        total_descuento:  0,
+        total_descuento: 0,
         criterio: '',
         cantidad_recibos: 1, //this.deta_caja_log
       },
@@ -767,7 +778,6 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     };
     this.visa.registrarLog(log).subscribe({
       next: (response: any) => {
-        console.log(response);
       },
       error: (error) => {
         console.error('Error al registrar el log:', error);
@@ -775,4 +785,20 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
     });
   }
 
+  minDate: string = '';
+  maxDate: string = '';
+
+  private establecerRangoDeFechas() {
+    const hoy = new Date();
+    const max = new Date();
+
+    // 8 días hacia adelante
+    max.setDate(hoy.getDate() + 9);
+
+    // Convertir a formato YYYY-MM-DD
+    this.minDate = hoy.toISOString().split('T')[0];
+    this.maxDate = max.toISOString().split('T')[0];
+
+    console.log("MIN:", this.minDate, "MAX:", this.maxDate);
+  }
 }

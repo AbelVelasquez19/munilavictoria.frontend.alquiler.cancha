@@ -1,0 +1,290 @@
+<!-- OVERLAY -->
+<div
+  *ngIf="abrirModal"
+  class="fixed inset-0 bg-black/40 flex items-start justify-center z-50 overflow-y-auto p-4 md:p-20"
+>
+  <!-- CONTENEDOR MODAL -->
+  <div
+    class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl mx-4 overflow-hidden border border-gray-200 animate-fadeInUp"
+  >
+    <!-- HEADER -->
+    <div
+      class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between"
+    >
+      <div>
+        <h1 class="text-lg md:text-xl font-semibold">Generar Horarios</h1>
+        <p class="text-[11px] md:text-xs text-blue-100">
+          Complete el formulario para generar horarios de las canchas.
+        </p>
+      </div>
+      <div
+        class="absolute top-1 right-5 md:top-15 md:right-90 z-50 border-white border-2 rounded-full"
+      >
+        <button
+          (click)="cerrarModal()"
+          class="w-7 h-7 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white text-sm shadow-md shadow-blue-900/20 transition cursor-pointer"
+        >
+          <span class="material-icons text-[16px]">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="px-6 py-6 bg-gray-50 space-y-8">
+      <!-- =================== FILA 1: COMPLEJO + CANCHAS =================== -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- PASO 1: COMPLEJO -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h2
+            class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2"
+          >
+            <span class="material-icons text-blue-600 text-[20px]"
+              >home_work</span
+            >
+            Paso 1 — Seleccionar complejo
+          </h2>
+
+          <select
+            [(ngModel)]="idComplejo"
+            (change)="cargarCanchas()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+          >
+            <option value="0">Seleccione un complejo deportivo</option>
+            <option *ngFor="let item of complejos" [value]="item.idComplejo">
+              {{ item.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <!-- PASO 2: CANCHAS -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h2
+            class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2"
+          >
+            <span class="material-icons text-green-600 text-[20px]"
+              >sports_soccer</span
+            >
+            Paso 2 — Seleccionar canchas
+          </h2>
+
+          <p class="text-xs text-gray-500 mb-2">
+            Seleccione una o varias canchas del complejo.
+          </p>
+
+          <div
+            class="grid grid-cols-1 gap-2 max-h-44 overflow-auto bg-gray-50 p-2 rounded-lg border border-gray-200"
+          >
+            <label
+              *ngFor="let cancha of canchas"
+              class="flex items-center gap-2 text-sm cursor-pointer hover:bg-gray-100 px-2 py-1 rounded"
+            >
+              <input
+                type="checkbox"
+                [(ngModel)]="cancha.selected"
+                (change)="actualizarVistaPrevia()"
+                class="w-4 h-4 accent-blue-600"
+              />
+              <span class="text-gray-700">{{ cancha.nombre }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <!-- end Fila 1 -->
+
+      <!-- =================== FILA 2: CALENDARIO + VISTA PREVIA =================== -->
+      <div class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6">
+        <!-- CALENDARIO -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h2
+            class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"
+          >
+            <span class="material-icons text-purple-600 text-[20px]"
+              >event</span
+            >
+            Paso 3 — Seleccionar fechas
+          </h2>
+
+          <div class="flex justify-between items-center mb-3">
+            <button (click)="prevMonth()" class="p-1 hover:bg-gray-200 rounded">
+              <span class="material-icons text-gray-600">chevron_left</span>
+            </button>
+
+            <h2 class="text-gray-800 font-semibold text-lg">
+              {{ nombreMes }} {{ anioActual }}
+            </h2>
+
+            <button (click)="nextMonth()" class="p-1 hover:bg-gray-200 rounded">
+              <span class="material-icons text-gray-600">chevron_right</span>
+            </button>
+          </div>
+
+          <div
+            class="grid grid-cols-7 text-center text-[11px] text-gray-500 mb-1"
+          >
+            <span>DO</span><span>LU</span><span>MA</span><span>MI</span
+            ><span>JU</span><span>VI</span><span>SA</span>
+          </div>
+
+          <div class="grid grid-cols-7 gap-1 text-center">
+            <ng-container *ngFor="let d of diasDelMes">
+              <button
+                (click)="toggleFecha(d.fechaISO)"
+                [disabled]="!d.esDelMes"
+                class="w-10 h-10 flex items-center justify-center rounded-full text-sm transition"
+                [ngClass]="{
+                  'bg-blue-600 text-white font-semibold': listaFechas.includes(
+                    d.fechaISO
+                  ),
+                  'text-gray-900':
+                    d.esDelMes && !listaFechas.includes(d.fechaISO),
+                  'text-gray-300': !d.esDelMes
+                }"
+              >
+                {{ d.dia }}
+              </button>
+            </ng-container>
+          </div>
+
+          <!-- FECHAS SELECCIONADAS -->
+          <!-- <div class="mt-3 flex flex-wrap gap-2">
+            <span
+              *ngFor="let f of listaFechas; let i = index"
+              class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs flex items-center gap-1"
+            >
+              {{ f }}
+              <span
+                class="material-icons text-[14px] cursor-pointer"
+                (click)="eliminarFecha(i)"
+              >
+                close
+              </span>
+            </span>
+          </div> -->
+        </div>
+        <!-- end Calendario -->
+
+        <!-- VISTA PREVIA -->
+
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <h2
+            class="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2"
+          >
+            <span class="material-icons text-gray-600 text-[22px]"
+              >visibility</span
+            >
+            Vista previa — Resumen de generación
+          </h2>
+
+          <div
+            class="bg-gray-50 border border-gray-200 rounded-lg p-4 max-h-80 overflow-y-auto space-y-4"
+          >
+            <!-- MENSAJE SI NO HAY DATOS -->
+            <p
+              *ngIf="
+                listaFechas.length === 0 || canchasSeleccionadas.length === 0
+              "
+              class="text-xs text-gray-500 italic"
+            >
+              No hay datos aún. Seleccione fechas y canchas para ver un resumen
+              aquí.
+            </p>
+
+            <!-- COMPLEJO -->
+            <div *ngIf="idComplejo" class="flex items-start gap-2">
+              <span class="material-icons text-blue-600 text-[20px]"
+                >home_work</span
+              >
+              <div>
+                <p class="text-sm font-semibold text-gray-800">
+                  Complejo seleccionado:
+                </p>
+                <p class="text-sm text-gray-700">
+                  {{ complejoSeleccionado?.nombre }}
+                </p>
+              </div>
+            </div>
+
+            <!-- CANCHAS -->
+            <div *ngIf="canchasSeleccionadas.length > 0">
+              <p class="text-sm font-semibold text-gray-800 mb-1">
+                Canchas seleccionadas ({{ canchasSeleccionadas.length }}):
+              </p>
+              <ul class="list-disc ml-5 text-xs text-gray-700">
+                <li *ngFor="let c of canchasSeleccionadas">{{ c.nombre }}</li>
+              </ul>
+            </div>
+
+            <!-- FECHAS -->
+            <div *ngIf="listaFechas.length > 0">
+              <p class="text-sm font-semibold text-gray-800 mb-1">
+                Fechas seleccionadas ({{ listaFechas.length }}):
+              </p>
+              <ul class="list-disc ml-5 text-xs text-gray-700">
+                <li *ngFor="let fecha of listaFechas">
+                  {{ fecha | date : "dd/MM/yyyy" }}
+                </li>
+              </ul>
+            </div>
+
+            <!-- RANGO HORARIO (si existe) -->
+            <div *ngIf="rangoHoraInicio && rangoHoraFin">
+              <p class="text-sm font-semibold text-gray-800">Rango horario:</p>
+              <p class="text-xs text-gray-700">
+                {{ rangoHoraInicio }} – {{ rangoHoraFin }} (duración por bloque
+                {{ duracionBloque }} min)
+              </p>
+            </div>
+
+            <!-- RESUMEN DE CÁLCULOS -->
+            <div
+              class="bg-white border border-gray-300 rounded-lg p-3 shadow-sm"
+            >
+              <p class="text-sm font-semibold text-gray-800 mb-2">Resumen:</p>
+
+              <p class="text-xs text-gray-600">
+                • Horarios por día/cancha:
+                <span class="font-semibold">{{ cantidadBloquesPorDia }}</span>
+              </p>
+
+              <p class="text-xs text-gray-600">
+                • Combinaciones (canchas × fechas):
+                <span class="font-semibold">{{ totalCombinaciones }}</span>
+              </p>
+
+              <p class="text-xs text-gray-600">
+                • Total de horarios que se generarán:
+                <span class="font-semibold text-blue-700">{{
+                  totalHorariosFinal
+                }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end Fila 2 -->
+    </div>
+
+    <!-- FOOTER -->
+    <div
+      class="flex justify-end items-center border-t px-6 py-2.5 bg-white"
+    >
+      <div>
+        <button
+          (click)="cerrarModal()"
+          class="bg-gray-200 cursor-pointer hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow-sm transition"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="generarHorarios()"
+          class="bg-blue-600 ml-5 cursor-pointer hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition"
+        >
+          Generar Horarios
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-loading *ngIf="isLoading"></app-loading>
+  <app-message #msg></app-message>
+</div>

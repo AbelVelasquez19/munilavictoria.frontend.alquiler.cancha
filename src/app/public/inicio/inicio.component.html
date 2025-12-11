@@ -1,4 +1,5 @@
 <!-- HEADER -->
+<!-- HEADER -->
 <header
   class="bg-white border-b border-gray-200 fixed top-0 left-0 w-full z-50 shadow-sm"
 >
@@ -10,7 +11,8 @@
     />
 
     <!-- ICONOS -->
-    <div class="flex items-center gap-6">
+    <div class="relative flex items-center gap-6">
+      <!-- AYUDA -->
       <button
         class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition"
       >
@@ -18,17 +20,47 @@
         <span class="hidden md:block text-sm font-medium">Ayuda</span>
       </button>
 
-      <button
-        class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition"
-      >
-        <span class="material-icons text-2xl">shopping_cart</span>
-      </button>
+      <!-- USER DROPDOWN -->
+      <div class="relative">
+        <!-- BOTÓN DE USUARIO -->
+        <button
+          (click)="toggleMenu()"
+          class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition cursor-pointer"
+        >
+          <span class="material-icons text-2xl">person</span>
+        </button>
 
-      <button
-        class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition"
-      >
-        <span class="material-icons text-2xl">person</span>
-      </button>
+        <!-- MENÚ DESPLEGABLE -->
+        <div
+          *ngIf="menuOpen"
+          class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg py-2 z-50"
+        >
+          <!-- Opción Admin -->
+          <a
+            [routerLink]="['/login']"
+            class="w-full flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm cursor-pointer"
+          >
+            <span class="material-icons text-[18px]">admin_panel_settings</span>
+            Admin
+          </a>
+
+          <!-- Opción Manual Video -->
+          <button
+            class="w-full flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm cursor-pointer"
+          >
+            <span class="material-icons text-[18px]">ondemand_video</span>
+            Manual video
+          </button>
+
+          <!-- Opción Manual PDF -->
+          <button
+            class="w-full flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm cursor-pointer"
+          >
+            <span class="material-icons text-[18px]">picture_as_pdf</span>
+            Manual PDF
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </header>
@@ -103,18 +135,30 @@
   </div>
 </footer>
 
-
 <app-registrar-reserva
-    #modalReserva
-    [abrirModal]="abrirModalRegistrarReserva"
-    [idComplejo]="idComplejoSeleccionado"
-    (cerrar)="cerrarRegistrarReserva()"
+  #modalReserva
+  [abrirModal]="abrirModalRegistrarReserva"
+  [idComplejo]="idComplejoSeleccionado"
+  (cerrar)="cerrarRegistrarReserva()"
 ></app-registrar-reserva>
 
 <app-loading *ngIf="isLoading"></app-loading>
 <app-message #msg></app-message>
 
-<app-aprobado>
-
+<app-aprobado
+  [visible]="mostarModalAprobado"
+  [estado]="EstadoPagoNiuviz"
+  [token]="tid"
+  [dataPagoAprobado]="dataPagoAprobado"
+  (cerrar)="cerrarModalAprobado()"
+>
+  >
 </app-aprobado>
-<!-- <app-rechazado></app-rechazado> -->
+<app-rechazado
+  [visible]="mostrarModalRechazado"
+  [estado]="EstadoPagoNiuviz"
+  [token]="tid"
+  [dataPagoRechazado]="dataPagoRechazado"
+  (cerrar)="cerrarModalRechazado()"
+>
+</app-rechazado>

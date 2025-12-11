@@ -1,13 +1,15 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { Complejo, IcomplejoRequest } from '../../core/interfaz/Complejo';
 import { DecimalPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { RegistrarReservaComponent } from '../components/registrar-reserva/registrar-reserva.component';
 import { LoadingComponent } from '../../shared/loading/loading.component';
 import { ComplejoService } from '../../core/service/complejo.service';
 import { MessageComponent } from '../../shared/message/message.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AprobadoComponent } from '../components/aprobado/aprobado.component';
 import { RechazadoComponent } from "../components/rechazado/rechazado.component";
+import { PagoService } from '../../core/service/pago.service';
+import { IPagoAprobadoResponse, IPagoRechazadoResponse } from '../../core/interfaz/pago';
 
 @Component({
   selector: 'app-inicio',
@@ -19,7 +21,9 @@ import { RechazadoComponent } from "../components/rechazado/rechazado.component"
     LoadingComponent,
     MessageComponent,
     AprobadoComponent,
-],
+    RechazadoComponent,
+    RouterModule
+  ],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css'
 })
@@ -31,30 +35,50 @@ export class InicioComponent {
   complejos: Complejo[] = [];
   idComplejoSeleccionado: number = 0;
 
-  mostrarResultado = true;
-  pagoAprobado = false;
-  purchaseNumber = "1039165";
-  fechaOperacion = "2025-12-02 15:48";
+  EstadoPagoNiuviz: string = "";
+  tid: string = "";
+  mostrarModalRechazado: string = '';
+  dataPagoRechazado: IPagoRechazadoResponse | null = null;
 
-  nombreCompleto = "VELASQUEZ VILLAFRANCA PRIMITIVO ABEL";
-  dni = "62126949";
-  celular = "922355307";
+  mostarModalAprobado: string = '';
+  dataPagoAprobado: IPagoAprobadoResponse | null = null;
 
-  canchaNombre = "Complejo Inca Garcilaso – Cancha 1";
-  canchaTipo = "Loza de fútbol";
+  menuOpen: boolean = false;
 
-  fechaReserva = "2025-12-02";
-  horaInicio = "13:00";
-  horaFin = "14:00";
+  constructor(private complejoService: ComplejoService, private route: ActivatedRoute, private pagoService: PagoService) { }
 
-  codigoReserva = "1644050";
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
 
-  totalPagado = 15.00;
+  @HostListener('document:click', ['$event'])
+  closeMenuOutside(event: Event) {
+    const target = event.target as HTMLElement;
 
-  constructor(private complejoService: ComplejoService, private route: ActivatedRoute) { }
+    // si hace click en el botón o el menú → no cerrar
+    if (target.closest('.relative')) return;
 
-  cerrarModal(){
-    
+    this.menuOpen = false;
+  }
+
+  ngOnInit(): void {
+    this.listarComplejos();
+    this.route.queryParams.subscribe(params => {
+      const tid = params['tid'];
+      this.tid = params['tid'];
+      if (tid) {
+        this.listarResultadoPago(tid);
+      } else {
+      }
+    });
+  }
+
+  cerrarModalRechazado() {
+    this.mostrarModalRechazado = '';
+  }
+
+  cerrarModalAprobado() {
+    this.mostarModalAprobado = '';
   }
 
   public cerrarRegistrarReserva() {
@@ -72,25 +96,51 @@ export class InicioComponent {
     }, 50);
   }
 
-  EstadoPagoNiuviz: string = "APROBADO";
+  private listarResultadoPago(idToken: string) {
+    this.isLoading = true;
+    const payload = {
+      idToken: idToken
+    };
 
-
-  ngOnInit(): void {
-    this.listarComplejos();
-    this.route.queryParams.subscribe(params => {
-      const tid = params['tid'];
-      if (tid) {
-        console.log('Estado de pago recibido de Niuviz:', tid);
+    this.pagoService.pagoRechazado(payload).subscribe({
+      next: (response: IPagoRechazadoResponse) => {
+        this.isLoading = false;
+        if (response.estadoPago === "REJECTED") {
+          this.mostrarModalRechazado = response.estadoPago;
+          this.dataPagoRechazado = response;
+          return;
+        }
+        if (response.estadoPago === "APPROVED") {
+          this.listarResultadoPagoAprobado(idToken);
+          return;
+        }
+        this.EstadoPagoNiuviz = response.estadoPago;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error al procesar el pago rechazado:', error);
       }
     });
   }
 
-  private listarResultadoPago() {
-    if (this.EstadoPagoNiuviz == "APROBADO") {
-      console.log('El pago se ha realizado con exito.', 'success');
-    } else {
-      console.log('El pago no se ha podido realizar.', 'error');
-    }
+  private listarResultadoPagoAprobado(idToken: string) {
+    this.isLoading = true;
+    const payload = {
+      idToken: idToken
+    };
+    this.pagoService.pagoAprobado(payload).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.status == 1) {
+          this.mostarModalAprobado = 'APROVED';
+          this.dataPagoAprobado = response;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error al procesar el pago aprobado:', error);
+      }
+    });
   }
 
   private listarComplejos() {
@@ -105,7 +155,6 @@ export class InicioComponent {
           this.msg.show('Error al listar los complejos deportivos.', 'error');
           return;
         }
-        console.log(response);
         this.complejos = response.data.map(item => ({
           idComplejo: item.idComplejo,
           nombre: item.nombre,

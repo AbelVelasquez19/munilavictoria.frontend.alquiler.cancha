@@ -19,6 +19,6 @@ export interface IHorariosResponse {
 export interface HorarioSlot {
     id: number;
     rango: string;
-    estado: 'disponible' | 'reservado' | 'taller';
+    estado: 'disponible' | 'reservado' | 'taller' | 'vencido';
     seleccionado: true | false;
   }

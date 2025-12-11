@@ -1,0 +1,224 @@
+<div class="min-h-screen flex bg-gray-100 relative">
+  <!-- Overlay solo en móvil -->
+  <div
+    *ngIf="sidebarOpen && isMobile"
+    (click)="toggleSidebar()"
+    class="fixed inset-0 bg-black/40 z-40"
+  ></div>
+
+  <!-- SIDEBAR (sin cambios para escritorio) -->
+  <aside
+    [ngClass]="{
+      'fixed z-50 top-0 left-0 h-full animate-slide-in':
+        isMobile && sidebarOpen,
+      hidden: isMobile && !sidebarOpen
+    }"
+    [class.w-64]="sidebarOpen"
+    [class.w-20]="!sidebarOpen"
+    class="bg-white/90 backdrop-blur border-r border-gray-200 flex flex-col transition-all duration-300 md:fixed md:left-0 md:h-[calc(100vh)] md:overflow-y-auto"
+  >
+    <!-- Logo -->
+    <div class="p-6 border-b border-gray-200 flex flex-col items-center">
+      <img
+        src="https://web.munilavictoria.gob.pe/mlv/assets/imgs/logo.png"
+        class="h-12 mb-2 transition-all duration-300"
+      />
+
+      <h2
+        *ngIf="sidebarOpen"
+        class="text-[13px] font-semibold text-gray-600 tracking-wide"
+      >
+        Complejo deportivo
+      </h2>
+    </div>
+
+    <!-- Usuario -->
+    <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-200">
+      <img
+        src="https://randomuser.me/api/portraits/men/32.jpg"
+        class="w-10 h-10 rounded-full shadow-sm"
+      />
+
+      <div *ngIf="sidebarOpen" class="flex flex-col">
+        <span class="font-semibold text-gray-900 text-sm">{{
+          nombreUsuario
+        }}</span>
+        <span class="text-gray-500 text-xs">Administrador</span>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <nav class="flex-1 px-3 py-6 space-y-1">
+      <a
+        [routerLink]="['/dashboard/inicio']"
+        routerLinkActive="active-link"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition cursor-pointer"
+      >
+        <span class="material-icons text-[20px]">grid_view</span>
+        <span *ngIf="sidebarOpen">Dashboard</span>
+      </a>
+
+      <!-- MENU CANCHAS (Desplegable) -->
+      <div>
+        <button
+          (click)="toggleCanchasMenu()"
+          class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition cursor-pointer"
+        >
+          <div class="flex items-center gap-3">
+            <span class="material-icons text-[20px]">sports_soccer</span>
+            <span *ngIf="sidebarOpen">Gestión de canchas</span>
+          </div>
+
+          <!-- Icono flecha -->
+          <span
+            *ngIf="sidebarOpen"
+            class="material-icons text-[18px] transition-transform duration-300"
+            [ngClass]="{ 'rotate-90': isMenuCanchasOpen }"
+          >
+            chevron_right
+          </span>
+        </button>
+
+        <!-- SUBMENÚ -->
+        <div
+          *ngIf="isMenuCanchasOpen && sidebarOpen"
+          class="ml-10 mt-1 space-y-1 transition-all"
+        >
+          <a
+            [routerLink]="['/dashboard/complejo']"
+            routerLinkActive="active-sublink"
+            class="block px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-blue-600 text-sm cursor-pointer"
+          >
+            Administrar canchas
+          </a>
+
+          <a
+            [routerLink]="['/dashboard/horas-disponibles']"
+            routerLinkActive="active-sublink"
+            class="block px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-blue-600 text-sm cursor-pointer"
+          >
+            Disponibilidad & Bloqueos
+          </a>
+
+          <a
+            [routerLink]="['/dashboard/tarifas']"
+            routerLinkActive="active-sublink"
+            class="block px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-blue-600 text-sm cursor-pointer"
+          >
+            Tarifas
+          </a>
+
+          <a
+            [routerLink]="['/dashboard/horarios']"
+            routerLinkActive="active-sublink"
+            class="block px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-blue-600 text-sm cursor-pointer"
+          >
+            Horarios base
+          </a>
+        </div>
+      </div>
+
+      <a
+        [routerLink]="['/dashboard/reservas']"
+        routerLinkActive="active-link"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition cursor-pointer"
+      >
+        <span class="material-icons text-[20px]">event_available</span>
+        <span *ngIf="sidebarOpen">Reservas</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- CONTENIDO GENERAL -->
+  <div class="flex-1 flex flex-col">
+    <!-- TOPBAR FIJA -->
+    <header
+      class="fixed top-0 right-0 h-20 bg-white/80 backdrop-blur border-b border-gray-200 px-6 py-3 flex items-center justify-between transition-all duration-300 z-40"
+      [ngClass]="{
+        'ml-64 w-[calc(100%-16rem)]': !isMobile && sidebarOpen,
+        'ml-20 w-[calc(100%-5rem)]': !isMobile && !sidebarOpen,
+        'ml-0 w-full': isMobile
+      }"
+    >
+      <!-- Botón menú -->
+      <button
+        (click)="toggleSidebar()"
+        class="hover:bg-gray-100 p-2 rounded-lg transition"
+      >
+        <span class="material-icons text-gray-700 text-2xl">menu</span>
+      </button>
+
+      <!-- ICONOS DERECHA -->
+      <div class="flex items-center gap-6 ml-auto">
+        <button class="relative hover:bg-gray-100 p-2 rounded-full transition">
+          <span class="material-icons text-gray-600">notifications</span>
+          <span
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center"
+            >4</span
+          >
+        </button>
+
+        <button class="hover:bg-gray-100 p-2 rounded-full transition">
+          <span class="material-icons text-gray-600">help_outline</span>
+        </button>
+
+        <button class="hover:bg-gray-100 p-2 rounded-full transition">
+          <span class="material-icons text-gray-600">fullscreen</span>
+        </button>
+
+        <!-- Avatar -->
+        <div class="relative" #menuContainer>
+          <button
+            (click)="toggleMenu()"
+            class="w-10 h-10 rounded-full overflow-hidden bg-gray-200 border border-gray-300 hover:ring-2 hover:ring-blue-300 transition"
+          >
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" />
+          </button>
+
+          <div
+            *ngIf="isMenuOpen"
+            class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden z-50 animate-fadeIn"
+          >
+            <a
+              class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 cursor-pointer text-gray-700"
+            >
+              <span class="material-icons text-gray-600">person</span>
+              Perfil
+            </a>
+
+            <a
+              class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 cursor-pointer text-gray-700"
+            >
+              <span class="material-icons text-gray-600">insights</span>
+              Actividad
+            </a>
+
+            <a
+              class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 cursor-pointer text-gray-700"
+            >
+              <span class="material-icons text-gray-600">settings</span>
+              Configuración
+            </a>
+
+            <div class="border-t"></div>
+
+            <a
+              (click)="logout()"
+              class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 cursor-pointer font-semibold"
+            >
+              <span class="material-icons text-red-500">logout</span>
+              Cerrar sesión
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO -->
+    <main
+      class="pt-20 p-4 sm:p-6 md:p-10 md:ml-64 transition-all duration-300 md:pt-24"
+    >
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

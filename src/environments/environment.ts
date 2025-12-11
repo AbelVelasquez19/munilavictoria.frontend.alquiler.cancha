@@ -3,7 +3,7 @@ export const environment = {
     appName: 'Complejo Deportivo',
     version: '1.0.0',
 
-    apiUrl: 'http://localhost:8081/api',
+    apiUrl: 'http://172.16.201.248:8081/api',
 
     merchantId: '456879852',
     USER_VISA : 'integraciones@niubiz.com.pe',

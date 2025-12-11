@@ -1,0 +1,297 @@
+¿Qué necesita realmente un SISTEMA ADMINISTRATIVO para un complejo deportivo?
+
+Aquí te voy a dar una propuesta profesional, basada en lo que piden los municipios, clubes deportivos y centros recreativos: lo que un dueño o administrador realmente necesita para gestionar todo el sistema.
+
+🟦 1. MÓDULO DE RESERVAS (LO MÁS IMPORTANTE)
+✔ 1.1. Ver reservas del día
+
+Un panel donde el dueño puede ver:
+
+Horarios reservados
+
+Horarios disponibles
+
+Pagos aprobados / rechazados
+
+Quién reservó
+
+Qué cancha
+
+Estado del pago
+
+📌 Vista tipo calendario + tabla (como Google Calendar).
+
+✔ 1.2. Crear reservas manualmente
+
+Muy importante, porque muchos administradores reservan:
+
+Para campeonatos
+
+Para alquiler por horas
+
+Para ligas especiales
+
+Para separaciones internas
+
+Debe permitir:
+
+Crear reserva sin pago
+
+Crear reserva con pago en ventanilla
+
+Bloquear horarios
+
+✔ 1.3. Cancelar / Reprogramar reservas
+
+El dueño puede:
+
+Cancelar una reserva del sistema
+
+Reprogramar para otra fecha
+
+Aplicar penalidades (opcional)
+
+
+
+
+🟩 2. MÓDULO DE GESTIÓN DE CANCHAS
+
+El dueño siempre necesita:
+
+✔ 2.1. Crear / editar canchas
+
+Nombre
+
+Tipo (fulbito, vóley, básquet, grass, sintético, etc.)
+
+Fotos
+
+Estado: activa / inactiva
+
+✔ 2.2. Gestionar disponibilidad
+
+“Bloquear horarios” es clave.
+
+Ejemplo:
+
+Cancha en mantenimiento
+
+Evento municipal
+
+Torneo
+
+Limpieza
+
+Horarios no disponibles
+
+Esto se hace sobre horario_estado_cancha y horario_base.
+
+
+
+
+🟧 3. MÓDULO DE TARIFAS
+
+Los dueños cambian los precios según:
+
+Día de semana
+
+Fin de semana
+
+Horas punta (5pm–10pm)
+
+Tipo de usuario (vecino / no vecino)
+
+Torneos
+
+Debe permitir:
+
+✔ Crear / editar tarifas
+
+Precio por hora
+
+Tipo de horario (diurna/nocturna)
+
+Días aplicables
+
+Tasa asociada (para tributos)
+
+
+
+
+🟪 4. MÓDULO DE REPORTES
+
+Esto es lo que más les interesa para controlar ingresos.
+
+✔ Reportes indispensables:
+
+Total recaudado por día
+
+Total recaudado por mes
+
+Total recaudado por cancha
+
+Horas más alquiladas
+
+Picos de demanda
+
+Número de pagos rechazados (Niubiz)
+
+Reporte para contabilidad (PDF/Excel)
+
+✔ Dashboard con tarjetas:
+
+Ingresos del día
+
+Ingresos del mes
+
+Reservas del día
+
+Usuarios activos
+
+El municipio ama esto.
+
+
+
+🟫 5. MÓDULO DE USUARIOS (Administradores)
+
+Permitir:
+
+✔ Crear administradores
+
+Operador
+
+Supervisor
+
+Administrador total
+
+✔ Cambiar contraseñas
+✔ Ver quién creó / canceló una reserva (auditoría)
+🟩 6. MÓDULO DE RECIBOS NIUBIZ
+
+El dueño podrá ver:
+
+Recibos
+
+Estado APPROVED / REJECTED
+
+Monto
+
+Fecha de pago
+
+Código Niubiz
+
+Comisiones (si aplica)
+
+Enlace para reenvío del comprobante al cliente
+
+Un “Ver recibos” como ya tienes, pero más completo.
+
+
+
+🟦 7. MÓDULO DE CLIENTES / ADMINISTRADOS
+
+El administrador puede:
+
+Buscar clientes por DNI
+
+Ver historial de reservas
+
+Ver estado de pagos
+
+Bloquear usuarios problemáticos (opcional)
+
+
+
+🟩 8. PANEL PARA MANTENIMIENTO DEL SISTEMA
+
+El dueño podría querer:
+
+✔ Configurar:
+
+Horas habilitadas de atención
+
+Máximo de reservas por persona
+
+Política de cancelación
+
+Porcentaje de penalidad por tardanza de pago
+
+Mensajes globales para mostrar en el sistema
+
+
+
+🟧 9. MÓDULO DE NOTIFICACIONES
+
+Para mejorar la experiencia:
+
+✔ Enviar:
+
+Notificación de pago aprobado
+
+Notificación de rechazo
+
+Recordatorio 1 hora antes de la reserva
+
+Notificación de cancelación
+
+Resumen diario al administrador
+
+
+
+
+⭐ 10. INTERFAZ PARA EL DUEÑO (RECOMENDACIÓN PROFESIONAL)
+
+Te sugiero esta estructura:
+
+Barra lateral
+
+Dashboard
+
+Reservas
+
+Canchas
+
+Tarifas
+
+Usuarios
+
+Recibos
+
+Reportes
+
+Clientes
+
+Header
+
+Notificaciones
+
+Ayuda
+
+Perfil
+
+Cerrar sesión
+
+🎯 CONCLUSIÓN — Qué cosas pediría un dueño
+
+Aquí lo resumo en una sola lista:
+
+Necesidad real	Solución
+Saber cuánto gana al día	Reportes + Dashboard
+Saber qué cancha se usa más	Reportes
+Controlar precios	Módulo de tarifas
+Bloquear horarios por eventos	Gestión de disponibilidad
+Tener reservas manuales	Crear reserva manual
+Evitar fraudes	Auditoría + Recibos Niubiz
+Control de operadores	Módulo de usuarios
+Ver reservas en tiempo real	Calendario + tabla
+Facilitar atención	Notificaciones automáticas
+📌 Si quieres, te puedo diseñar:
+
+✅ La arquitectura completa del sistema admin
+✅ Las pantallas y UI en Angular
+✅ Los endpoints y SP optimizados
+✅ Los modelos, interfaces y servicios
+✅ Seguridad con JWT (roles)
+✅ Toda la lógica del administrador de forma profesional
+
+¿Deseas que te prepare un prototipo visual (wireframe) del panel administrativo según tus colores y estilo actual?
