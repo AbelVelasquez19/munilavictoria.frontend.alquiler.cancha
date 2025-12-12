@@ -17,6 +17,7 @@ export class AprobadoComponent {
   @Input() estado: string = '';
   @Input() token: string = '';
   @Input() dataPagoAprobado: IPagoAprobadoResponse | null = null;
+  @Input() authRawJson: any;
   @Output() cerrar = new EventEmitter<void>();
   
   constructor(private router: Router) {}

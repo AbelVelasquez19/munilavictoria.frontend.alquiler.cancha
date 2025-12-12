@@ -129,8 +129,9 @@
             <ng-container *ngFor="let d of diasDelMes">
               <button
                 (click)="toggleFecha(d.fechaISO)"
-                [disabled]="!d.esDelMes"
-                class="w-10 h-10 flex items-center justify-center rounded-full text-sm transition"
+                [disabled]="!d.esDelMes || d.fechaISO < minDate"
+
+                class="w-8 h-8 flex items-center justify-center rounded-full text-sm transition cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-300"
                 [ngClass]="{
                   'bg-blue-600 text-white font-semibold': listaFechas.includes(
                     d.fechaISO

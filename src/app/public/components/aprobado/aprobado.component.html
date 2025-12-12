@@ -24,7 +24,7 @@
       <div>
         <h1 class="text-xl font-semibold">RESERVA CONFIRMADA</h1>
         <p class="text-white/80 text-sm">
-          Operación Nº {{ dataPagoAprobado?.purchaseNumber }} •
+          Número de pedido: {{ dataPagoAprobado?.purchaseNumber }} •
           {{ dataPagoAprobado?.fecPago }}
         </p>
       </div>
@@ -46,6 +46,33 @@
           DNI: {{ dataPagoAprobado?.numeroDocumento }} • Cel:
           {{ dataPagoAprobado?.celular }}
         </p>
+      </div>
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- PAGO -->
+      <div class="mb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="col-span-6">
+          <p class="text-sm font-semibold text-gray-700">TARJETA</p>
+          <p class="font-medium text-gray-900">
+            {{ authRawJson.dataMap.CARD || "**** **** **** ****" }}
+          </p>
+        </div>
+
+        <div class="col-span-6">
+          <p class="text-sm font-semibold text-gray-700">MARCA</p>
+          <p class="font-medium text-gray-900">
+            {{ authRawJson.dataMap.BRAND || "—" }}
+          </p>
+        </div>
+
+        <div class="col-span-12">
+          <p class="text-sm font-semibold text-gray-700">Descripción</p>
+          <p class="font-medium text-gray-900">
+            {{ authRawJson.dataMap.ACTION_DESCRIPTION || "—" }}
+          </p>
+        </div>
+
       </div>
 
       <div class="border-t border-dashed border-gray-400 mb-5"></div>
@@ -75,11 +102,13 @@
             </span>
           </p>
         </div>
-         <div>
+        <div>
           <p class="text-sm font-semibold text-gray-700">Cantidad</p>
         </div>
-         <div>
-          <p class="text-sm font-semibold text-gray-700">{{dataPagoAprobado?.cantidadHoras}} Hrs</p>
+        <div>
+          <p class="text-sm font-semibold text-gray-700">
+            {{ dataPagoAprobado?.cantidadHoras }} Hrs
+          </p>
         </div>
       </div>
 

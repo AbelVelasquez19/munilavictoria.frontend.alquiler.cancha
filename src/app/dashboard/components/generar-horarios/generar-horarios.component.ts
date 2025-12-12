@@ -68,6 +68,7 @@ export class GenerarHorariosComponent {
 
     this.generarCalendario();
     this.cargarComplejos();
+    this.establecerRangoDeFechas();
   }
 
   
@@ -140,6 +141,24 @@ export class GenerarHorariosComponent {
     }
 
     this.diasDelMes = dias;
+  }
+
+  //VALIDAR  RANGO DE FECHAS SELECCIONABLES
+  minDate: string = '';
+  maxDate: string = '';
+
+  private establecerRangoDeFechas() {
+    const hoy = new Date();
+    const max = new Date();
+
+    // 8 días hacia adelante
+    max.setDate(hoy.getDate() + 9);
+
+    // Convertir a formato YYYY-MM-DD
+    this.minDate = hoy.toISOString().split('T')[0];
+    this.maxDate = max.toISOString().split('T')[0];
+
+    console.log("MIN:", this.minDate, "MAX:", this.maxDate);
   }
 
   prevMonth() {

@@ -47,3 +47,19 @@ export interface IHorarioMasivoResponse {
         message:string;
     },
 }
+
+export interface ICambiarEstadoHorarioRequest {
+    idEstadoCancha:number;
+    nuevoEstado:string;
+    operador:string;
+}
+
+export interface ICambiarEstadoHorarioResponse {
+    status: string;
+    message:string;
+    timestamp: string;
+    data:{
+        status:number;
+        message:string;
+    },
+}

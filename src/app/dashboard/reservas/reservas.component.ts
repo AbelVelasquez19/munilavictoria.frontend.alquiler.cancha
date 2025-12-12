@@ -1,7 +1,7 @@
 import { DecimalPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IListarAdminReservasRequest, IListarAdminReservasResponse } from '../../core/interfaz/comAdminReservas';
+import { ICambiarEstadoHorarioRequest, ICambiarEstadoHorarioResponse, IListarAdminReservasRequest, IListarAdminReservasResponse } from '../../core/interfaz/comAdminReservas';
 import { ComplejoAdminReservaSerivice } from '../../core/service/comAdminReservas';
 import { IcomplejoRequest, IComplejoResponse } from '../../core/interfaz/Complejo';
 import { ComplejoService } from '../../core/service/complejo.service';
@@ -143,8 +143,41 @@ export class ReservasComponent {
     this.abrirModalGenerarHorarios = false;
   }
 
-  public generarHorarios() {
+  nuevoEstado: string = '';
+  public cambiarEstadoHorario(idEstadoCancha: number, estado: string) {
+    this.isLoading = true;
+    if(idEstadoCancha == 0 || idEstadoCancha == null){
+      this.msg.show('ID de estado de cancha inválido', 'error');
+      return;
+    }
+    if(estado == 'T'){
+      this.nuevoEstado = 'D';
+    }
+    if(estado == 'D'){
+      this.nuevoEstado = 'T';
+    }
+    const payload:ICambiarEstadoHorarioRequest = {
+      idEstadoCancha: idEstadoCancha,
+      nuevoEstado: this.nuevoEstado,
+      operador:'COMPLEJO ADMIN'
+    };
 
+    this.complejoAdminReservaService.cambiarEstadoHorario(payload).subscribe({
+      next: (resp: ICambiarEstadoHorarioResponse) => {
+        this.isLoading = false;
+        if (resp.status !== 'success') {
+          this.msg.show('Error al cambiar estado del horario', 'error');
+          return;
+        }
+        /* this.msg.show('Estado del horario cambiado correctamente', 'success'); */
+        this.listarReservasDeportivas();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.msg.show('Error al cambiar estado del horario', 'error');
+      }
+    });
+    
   }
 
 }

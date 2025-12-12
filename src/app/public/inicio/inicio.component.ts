@@ -45,6 +45,8 @@ export class InicioComponent {
 
   menuOpen: boolean = false;
 
+  authRawJson: any;
+
   constructor(private complejoService: ComplejoService, private route: ActivatedRoute, private pagoService: PagoService) { }
 
   toggleMenu() {
@@ -130,10 +132,12 @@ export class InicioComponent {
     };
     this.pagoService.pagoAprobado(payload).subscribe({
       next: (response) => {
+        console.log(response);
         this.isLoading = false;
         if (response.status == 1) {
           this.mostarModalAprobado = 'APROVED';
           this.dataPagoAprobado = response;
+          this.authRawJson = JSON.parse(response.authRaw as string);
         }
       },
       error: (error) => {

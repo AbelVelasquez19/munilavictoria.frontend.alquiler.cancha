@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { Observable } from "rxjs";
-import { IHorarioMasivoRequest, IHorarioMasivoResponse, IListarAdminReservasRequest, IListarAdminReservasResponse } from "../interfaz/comAdminReservas";
+import { ICambiarEstadoHorarioRequest, ICambiarEstadoHorarioResponse, IHorarioMasivoRequest, IHorarioMasivoResponse, IListarAdminReservasRequest, IListarAdminReservasResponse } from "../interfaz/comAdminReservas";
 
 @Injectable({ providedIn: 'root' })
 export class ComplejoAdminReservaSerivice {
@@ -16,5 +16,9 @@ export class ComplejoAdminReservaSerivice {
 
     public generarHorariosMasivos(payload:IHorarioMasivoRequest):Observable<IHorarioMasivoResponse> {
         return this.http.post<IHorarioMasivoResponse>(`${this.apiUrl}/generar-horario-masivo`, payload);
+    }
+
+    public cambiarEstadoHorario(payload:ICambiarEstadoHorarioRequest):Observable<ICambiarEstadoHorarioResponse> {
+        return this.http.post<ICambiarEstadoHorarioResponse>(`${this.apiUrl}/cambiar-estado-horario`, payload);
     }
 }

@@ -72,6 +72,8 @@ export interface IPagoAprobadoResponse {
   tarifaHora: number;
 
   detallesJson: IDetalleReserva[];
+
+  authRaw:String;
 }
 
 export interface IDetalleReserva {

@@ -16,7 +16,7 @@
       <div>
         <h1 class="text-xl font-semibold">PAGO RECHAZADO</h1>
         <p class="text-white/80 text-sm">
-          Operación Nº {{ dataPagoRechazado?.purchaseNumber }} • {{ dataPagoRechazado?.authRaw?.data?.TRANSACTION_DATE }}
+          Numero de Pedido: {{ dataPagoRechazado?.purchaseNumber }} • {{ formatFechaNiubiz(dataPagoRechazado?.authRaw?.data?.TRANSACTION_DATE) || '' }}
         </p>
       </div>
     </div>

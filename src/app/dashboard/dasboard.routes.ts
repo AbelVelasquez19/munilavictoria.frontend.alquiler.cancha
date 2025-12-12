@@ -20,11 +20,7 @@ export const DASHBOARD_ROUTES: Routes = [
             {
                 path: 'reservas',
                 loadComponent: () => import('./reservas/reservas.component').then(m => m.ReservasComponent)
-            },
-            {
-                path: 'horas-disponibles',
-                loadComponent: () => import('./horasdisponibles/horasdisponibles.component').then(m => m.HorasdisponiblesComponent)
-            },
+            }
         ]
     },
     { path: 'inicio', component: InicioComponent },

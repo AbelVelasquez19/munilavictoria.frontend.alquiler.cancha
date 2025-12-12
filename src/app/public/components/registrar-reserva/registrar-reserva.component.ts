@@ -17,7 +17,6 @@ import { NiubizService } from '../../../core/service/niubiz.service';
 import { environment } from '../../../../environments/environment';
 import { INumeroCompra, LogVisa } from '../../../core/interfaz/niuviz';
 import { Router } from '@angular/router';
-import { map, tap } from 'rxjs';
 
 
 declare var VisanetCheckout: any;
@@ -76,6 +75,8 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
   numeroCompra!: INumeroCompra;
 
   sessionToken: string = '';
+
+  conAceptoTerminosPago: boolean = false;
 
   constructor(
     private canchasService: CanchasService,
@@ -720,6 +721,12 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
   }
 
   public ejecutarCheckout() {
+    
+    if(!this.conAceptoTerminosPago){
+      this.msg.show('Debe aceptar los términos y condiciones del pago.', 'warning');
+      return;
+    }
+
     if (!this.sessionToken) {
       this.msg.show('No se ha generado el session token intenta nuevamente.', 'error');
       return;
