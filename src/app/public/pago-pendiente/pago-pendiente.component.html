@@ -1,0 +1,383 @@
+<!-- HEADER -->
+<header
+  class="bg-white border-b border-gray-200 fixed top-0 left-0 w-full z-50 shadow-sm"
+>
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <!-- LOGO -->
+    <img
+      src="https://web.munilavictoria.gob.pe/mlv/assets/imgs/logo.png"
+      class="h-10 md:h-12 select-none"
+    />
+
+    <!-- ICONOS -->
+    <div class="relative flex items-center gap-6">
+      <!-- AYUDA -->
+      <button
+        class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition"
+      >
+        <span class="material-icons text-2xl">help_outline</span>
+        <span class="hidden md:block text-sm font-medium">Ayuda</span>
+      </button>
+
+      <!-- USER DROPDOWN -->
+      <div class="relative">
+        <!-- BOTÓN DE USUARIO -->
+        <button
+          (click)="toggleMenu()"
+          class="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition cursor-pointer"
+        >
+          <span class="material-icons text-2xl">person</span>
+        </button>
+
+        <!-- MENÚ DESPLEGABLE -->
+        <div
+          *ngIf="menuOpen"
+          class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg py-2 z-50"
+        >
+          <!-- Opción Admin -->
+          <a
+            [routerLink]="['/login']"
+            class="w-full flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm cursor-pointer"
+          >
+            <span class="material-icons text-[18px]">admin_panel_settings</span>
+            Admin
+          </a>
+
+          <!-- Opción Manual Video -->
+          <button
+            class="w-full flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm cursor-pointer"
+          >
+            <span class="material-icons text-[18px]">ondemand_video</span>
+            Manual video
+          </button>
+
+          <!-- Opción Manual PDF -->
+          <button
+            class="w-full flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm cursor-pointer"
+          >
+            <span class="material-icons text-[18px]">picture_as_pdf</span>
+            Manual PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="pt-24 pb-20 bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4">
+    <!-- Paso 3: Finalizar reserva -->
+    <div class="space-y-4" *ngIf="detalleValido">
+      <!-- Encabezado -->
+      <div class="flex items-center gap-2">
+        <span
+          class="w-7 h-7 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 text-sm"
+        >
+          <span class="material-icons text-[16px]">check_circle</span>
+        </span>
+        <div>
+          <h3
+            class="text-xs font-semibold tracking-wide text-blue-900 uppercase"
+          >
+            Finalizar reserva
+          </h3>
+          <p class="text-[11px] text-gray-500">
+            Revisa el resumen de tu reserva antes de continuar con el pago.
+          </p>
+        </div>
+      </div>
+
+      <!-- Aviso importante -->
+      <div
+        class="border border-dashed border-blue-200 rounded-lg p-3 bg-blue-50 text-[12px] text-gray-700"
+      >
+        <p class="mb-1">
+          <span class="font-semibold text-gray-900">IMPORTANTE:</span>
+          Presenta en cancha el detalle de la reserva con el código QR que
+          recibirás en tu correo.
+        </p>
+        <p class="text-[11px] text-red-500 mt-2">
+          ¡No cierres esta ventana mientras se procesa tu pago!
+        </p>
+      </div>
+
+      <!-- ADVERTENCIA DE TIEMPO LÍMITE -->
+      <div
+        class="flex items-start gap-3 border border-yellow-200 bg-yellow-50 rounded-lg p-4 text-[12px] text-gray-800"
+      >
+        <span class="material-icons text-yellow-600 text-[22px]">
+          warning_amber
+        </span>
+
+        <div class="space-y-1">
+          <p class="font-semibold text-yellow-800">
+            Tiempo límite para realizar el pago
+          </p>
+          <p>
+            Esta reserva estará disponible solo por
+            <span class="font-bold text-red-600">5 minutos</span>
+            desde que se generó el enlace.
+          </p>
+          <p class="text-gray-600 text-[11px]">
+            Si no se completa el pago dentro de este tiempo, la reserva se
+            <span class="font-semibold text-red-600"
+              >cancelará automáticamente</span
+            >
+            y los horarios volverán a estar disponibles.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="border border-gray-200 rounded-2xl p-4 bg-white shadow-sm space-y-6"
+      >
+        <!-- RESPONSABLE -->
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shadow-sm"
+            >
+              <span class="material-icons text-[20px]">person</span>
+            </div>
+
+            <div>
+              <p
+                class="text-[10px] uppercase font-semibold text-gray-600 tracking-wide"
+              >
+                Responsable de la reserva
+              </p>
+              <p class="text-[13px] font-semibold text-gray-900">
+                {{ resumenReserva.nombreAdministrado }}
+              </p>
+            </div>
+          </div>
+
+          <div class="text-right text-[11px] text-gray-600 leading-tight">
+            <p>
+              <span class="font-semibold text-gray-700">DNI:</span>
+              {{ resumenReserva.numeroDocumento }}
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Cel:</span>
+              {{ resumenReserva.celular }}
+            </p>
+          </div>
+        </div>
+
+        <hr class="border-gray-100" />
+
+        <!-- INFORMACIÓN PRINCIPAL -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- COMPLEJO -->
+          <div class="space-y-1">
+            <p
+              class="text-[10px] uppercase font-semibold text-gray-600 tracking-wide"
+            >
+              Complejo y cancha
+            </p>
+
+            <div class="flex items-start gap-2">
+              <span class="material-icons text-blue-500 text-[18px]"
+                >location_on</span
+              >
+              <div>
+                <p class="text-[13px] font-semibold text-gray-900">
+                  {{ resumenReserva.complejo }}
+                </p>
+                <p class="text-[11px] text-gray-600">
+                  {{ resumenReserva.cancha }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FECHA & HORARIOS -->
+          <div class="space-y-1">
+            <p
+              class="text-[10px] uppercase font-semibold text-gray-600 tracking-wide"
+            >
+              Fecha y horarios
+            </p>
+
+            <div class="flex items-center gap-2">
+              <span class="material-icons text-blue-500 text-[18px]"
+                >event</span
+              >
+              <p class="text-[13px] font-semibold text-gray-900">
+                {{ resumenReserva.fechaReserva }}
+              </p>
+            </div>
+
+            <div class="space-y-0.5 pl-6">
+              <div
+                *ngFor="let h of resumenReserva.detalles"
+                class="flex items-center justify-between text-[12px]"
+              >
+                <p class="text-gray-700">
+                  • <span class="font-medium">{{ h.rango }}</span>
+                </p>
+                <p class="font-semibold text-blue-700">
+                  S/ {{ h.precio | number : "1.2-2" }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-gray-100" />
+
+        <!-- TOTAL A PAGAR -->
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+        >
+          <div
+            class="text-[12px] text-gray-700 leading-tight flex items-start gap-2"
+          >
+            <span class="material-icons text-blue-600 text-[18px]"
+              >receipt_long</span
+            >
+
+            <div>
+              <p
+                class="uppercase text-[10px] font-semibold text-gray-800 tracking-wide"
+              >
+                Resumen de pago
+              </p>
+              <p>
+                Horas reservadas:
+                <span class="font-semibold text-gray-900">
+                  {{ resumenReserva.cantidadHoras }} h
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div class="text-right">
+            <p class="text-[10px] uppercase text-gray-500 tracking-wide">
+              Total a pagar
+            </p>
+
+            <p class="text-[22px] font-extrabold text-blue-700 leading-none">
+              S/ {{ resumenReserva.montoTotal | number : "1.2-2" }}
+            </p>
+
+            <p class="text-[10px] text-gray-500 mt-0.5">
+              Pago seguro con tarjeta a través de nuestra pasarela.
+            </p>
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <!-- poner checkbox aqui que acepte terminos de pago -->
+          <label
+            class="flex items-start gap-2 text-[11px] text-gray-600 cursor-pointer select-none"
+          >
+            <input
+              [(ngModel)]="conAceptoTerminosPago"
+              type="checkbox"
+              class="mt-0.5 w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              name="aceptaTerminosPago"
+            />
+            <span>
+              Acepto los
+              <button
+                type="button"
+                class="text-blue-600 font-semibold hover:underline hover:text-blue-700"
+              >
+                Términos y condiciones
+              </button>
+              del servicio de pago.
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Botón de pago Niubiz -->
+      <div class="flex flex-col md:flex-row justify-end md:items-center gap-3">
+        <!-- Proceder al pago -->
+        <button
+          type="button"
+          (click)="ejecutarCheckout()"
+          class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-md shadow-blue-500/20 transition cursor-pointer w-full md:w-auto"
+        >
+          <span class="material-icons text-[16px]">credit_card</span>
+          Proceder al pago
+          <span class="text-[11px] bg-white/10 px-2 py-0.5 rounded-full">
+            Pasarela segura
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="space-y-4" *ngIf="!detalleValido">
+      <!-- ESTADO: DETALLE NO VÁLIDO -->
+      <div class="min-h-[60vh] flex items-center justify-center px-4">
+        <div
+          class="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center space-y-6"
+        >
+          <!-- ICONO -->
+          <div
+            class="mx-auto w-16 h-16 rounded-full bg-red-50 flex items-center justify-center"
+          >
+            <span class="material-icons text-red-600 text-[32px]">
+              report_problem
+            </span>
+          </div>
+
+          <!-- TÍTULO -->
+          <h2 class="text-lg font-semibold text-gray-900">
+            No se pudo cargar el detalle de la reserva
+          </h2>
+
+          <!-- DESCRIPCIÓN -->
+          <div class="space-y-2 text-sm text-gray-600 leading-relaxed">
+            <p>
+              La reserva puede no existir, haber sido
+              <span class="font-medium">pagada</span>,
+              <span class="font-medium">cancelada</span> o encontrarse
+              <span class="font-medium">vencida</span>.
+            </p>
+
+            <p>
+              Intente nuevamente o comuníquese con el
+              <span class="font-semibold text-gray-800">
+                administrador del sistema </span
+              >.
+            </p>
+          </div>
+
+          <!-- ACCIONES -->
+          <div class="pt-4 flex justify-center">
+            <button
+              routerLink="/"
+              class="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm cursor-pointer"
+            >
+              <span class="material-icons text-[18px]">home</span>
+              Volver al inicio
+            </button>
+          </div>
+
+          <!-- PIE -->
+          <p class="text-[11px] text-gray-400 pt-2">
+            Municipalidad de La Victoria · Sistema de Reservas Deportivas
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<!-- FOOTER -->
+<footer class="bg-gray-50 border-t border-gray-200 py-6 mt-12">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <div class="flex justify-center items-center gap-2 text-gray-600">
+      <span class="material-icons text-gray-500 text-base">apartment</span>
+      <span class="font-medium">Municipalidad de La Victoria</span>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-1">
+      © 2025 – Gestión Municipal Deportiva • Todos los derechos reservados.
+    </p>
+  </div>
+</footer>
+<app-loading *ngIf="isLoading"></app-loading>
+<app-message #msg></app-message>

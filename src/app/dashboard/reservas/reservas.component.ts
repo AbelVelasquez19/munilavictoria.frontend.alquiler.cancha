@@ -71,6 +71,7 @@ export class ReservasComponent {
   }
 
   listarReservasDeportivas() {
+    this.liberarReservaExpirada();
     this.isLoading = true;
     const payload: IListarAdminReservasRequest = {
       fecha: this.fechaSeleccionada,
@@ -87,7 +88,6 @@ export class ReservasComponent {
           return;
         }
         this.dataListaReserva = resp;
-        this.liberarReservaExpirada();
       },
       error: (err) => {
         this.isLoading = false;
@@ -147,6 +147,9 @@ export class ReservasComponent {
 
   public buscarReservas() {
     this.listarReservasDeportivas();
+    this.horarioSeleccionado = [];
+    this.dataTarifa = [];
+    this.totalPagar = 0;
   }
 
   abrirModalGenerarHorarios: boolean = false;

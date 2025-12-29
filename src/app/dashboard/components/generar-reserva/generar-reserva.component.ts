@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { ComplejoAdminRequest, ComplejoAdminResponse } from '../../../core/interfaz/comAdmin';
 import { ComplejoAdminSerivice } from '../../../core/service/comAdmin.service';
 import { TarifaDetalleResponse } from '../../../core/interfaz/tarifa';
+import { IReservaRegistrarRequest, IReservaRegistrarResponse } from '../../../core/interfaz/reserva';
+import { ReservaService } from '../../../core/service/reserva.service';
 
 @Component({
   selector: 'app-generar-reserva',
@@ -21,25 +23,49 @@ export class GenerarReservaComponent {
   @Input() horarios: any[] = [];
   @Input() dataTarifas: TarifaDetalleResponse[] = [];
   @Input() totalPago: number = 0;
+  @Input() idCanchaSeleccionada: number = 0;
+  @Input() fechaSeleccionadas: string = '';
 
-  constructor(private comAdminService: ComplejoAdminSerivice) { }
+  constructor(
+    private comAdminService: ComplejoAdminSerivice,
+    private reservaService: ReservaService
+  ) { }
 
   isLoading: boolean = false;
   animarModal: boolean = false;
 
   tipoDocumento: string = '01';
-  numeroDocumento: string = '';
-  nombre: string = '';
-  paterno: string = '';
-  materno: string = '';
-  telefono: string = '';
-  correo: string = '';
+  numeroDocumento: string = '62126949';
+  nombre: string = 'abel';
+  paterno: string = 'velasquez';
+  materno: string = 'villafranca';
+  telefono: string = '922355307';
+  correo: string = 'abel.velasquez1997@gmail.com';
 
   idAdministrado?: number = 0;
 
   maxLength: number = 8;
+
+  idReserva: number = 0;
+
+  linkPago: string = '';
+
   cerrarModal() {
     this.animarModal = false;
+    this.dataTarifas = [];
+    this.horarios = [];
+    this.totalPago = 0;
+    this.idReserva = 0;
+    this.linkPago = '';
+    this.tipoDocumento = '01';
+    this.numeroDocumento = '';
+    this.nombre = '';
+    this.paterno = '';
+    this.materno = '';
+    this.telefono = '';
+    this.correo = '';
+
+    this.registrado.emit();
     setTimeout(() => {
       this.cerrar.emit();
     }, 300);
@@ -99,6 +125,11 @@ export class GenerarReservaComponent {
       this.isLoading = false;
       return;
     }
+    if (this.dataTarifas[0].codTasa == undefined || this.dataTarifas[0].codTasa == null || this.dataTarifas[0].codTasa == '') {
+      this.msg.show('No se ha obtenido la tasa de la tarifa comunicar con el administrador.', 'error');
+      this.isLoading = false;
+      return;
+    }
     const payload: ComplejoAdminRequest = {
       tipoPersona: '01',
       tipoDocumento: this.tipoDocumento,
@@ -123,7 +154,7 @@ export class GenerarReservaComponent {
           this.msg.show('El administrado no se ha registrado correctamente.', 'error');
           return;
         }
-        /* this.registrarReserva(this.idAdministrado); */
+        this.registrarReserva(this.idAdministrado);
       }, error: (error) => {
         this.isLoading = false;
         this.msg.show('Error al registrar el administrador.', 'error');
@@ -161,95 +192,74 @@ export class GenerarReservaComponent {
     return true;
   }
 
-  horasSeleccionadas: any[] = [];
-
-  public seleccionarHorario(slot: any) {
-    console.log(slot);
-    // Solo permitir si es disponible
-    if (slot.estado !== 'disponible') {
+  private registrarReserva(idAdministrado: number) {
+    if (!this.validarCampoReserva()) {
+      this.isLoading = false;
       return;
     }
+    const horariosSeleccionadosIds = this.dataTarifas.map(d => d.idHorarioBase);
+    const payload: IReservaRegistrarRequest = {
+      idAdministrado: Number(idAdministrado),
+      idCancha: Number(this.idCanchaSeleccionada),
+      fecha: this.fechaSeleccionadas,
+      horarios: horariosSeleccionadosIds.join(','),
+      montoTotal: this.totalPago,
+      cantidadHoras: this.horarios.length
+    };
 
-    // Si ya está seleccionado -> desmarcar
-    /* if (slot.seleccionado) {
-      slot.seleccionado = false;
-      this.horasSeleccionadas = this.horasSeleccionadas.filter(h => h.id !== slot.id);
-      //cuando deselecciono una hora, recalculo la tarifa, quitar de dataTarifa si la idHorarioBase coincide
-      this.dataTarifa = this.dataTarifa.filter(d => d.idHorarioBase !== slot.id);
-      this.totalPagar = this.dataTarifa.reduce((total, item) => total + item.precio, 0);
-      return;
-    } */
+    this.reservaService.registrarReserva(payload).subscribe({
+      next: (response: IReservaRegistrarResponse) => {
+        this.isLoading = false;
+        if (response.status !== 1) {
+          /* this.listarHorarios(); */
+          this.horarios = [];
+          this.totalPago = 0;
+          this.dataTarifas = [];
+          this.msg.show(response.message, 'error');
+          return;
+        }
+        this.idReserva = response.idReserva;
 
-    // Validar máximo 2 horas
-   /*  if (this.horasSeleccionadas.length >= 2) {
-      this.msg.show("Solo puedes seleccionar máximo 2 horas por día.", "warning");
-      return;
-    } */
+        /* this.detalleReserva(response.idReserva); */
+        /* this.generateSessionToken(); */
 
-    // Seleccionar
-    /* slot.seleccionado = true;
-    this.horasSeleccionadas.push(slot);
-    this.calcularTarifa(slot); */
+        //aqui generar link de pago, convertir idReserva a un blob que sea corto el blob
+        const idReservaEncoded = encodeURIComponent(
+          btoa(response.idReserva.toString())
+        );
+
+        const idCanchaEncoded = encodeURIComponent(
+          btoa(this.idCanchaSeleccionada.toString())
+        );
+
+        this.linkPago = `http://172.16.201.248:4500/pago-pendiente/${idReservaEncoded}/${idCanchaEncoded}`;
+        this.msg.show('Reserva registrada correctamente, Por favor, utilice el link de pago generado.', 'success');
+        this.registrado.emit();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.msg.show('Error al registrar la reserva.', 'error');
+      }
+    });
   }
 
-
-  /* 
-    private registrarReserva(idAdministrado:number) {
-      if (!this.validarCampoReserva()) {
-        this.isLoading = false;
-        return;
-      }
-      const horariosSeleccionadosIds = this.dataTarifa.map(d => d.idHorarioBase);
-      const payload: IReservaRegistrarRequest = {
-        idAdministrado: this.idAdministrado,
-        idCancha: this.canchaSeleccionadaId,
-        fecha: this.fechaReserva,
-        horarios: horariosSeleccionadosIds.join(','),
-        montoTotal: this.totalPagar,
-        cantidadHoras: this.horasSeleccionadas.length
-      };
-  
-      this.reservaService.registrarReserva(payload).subscribe({
-        next: (response: IReservaRegistrarResponse) => {
-          this.isLoading = false;
-          if (response.status !== 1) {
-            this.listarHorarios();
-            this.horasSeleccionadas = [];
-            this.totalPagar = 0;
-            this.dataTarifa = [];
-            this.msg.show(response.message, 'error');
-            return;
-          }
-          this.idReserva = response.idReserva;
-          this.detalleReserva(response.idReserva);
-          this.generateSessionToken();
-          this.pasoActivo = 3;
-          this.footerDisabled = true;
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.msg.show('Error al registrar la reserva.', 'error');
-        }
-      });
-    } */
-
-  /* private validarCampoReserva(): boolean {
+  private validarCampoReserva(): boolean {
     if (this.idAdministrado == 0) {
       this.msg.show('No existe administrado, cerrar la ventana y volver a reservar.', 'warning');
       return false;
     }
-    if (this.canchaSeleccionadaId == 0) {
+    if (this.idCanchaSeleccionada == 0) {
       this.msg.show('No existe cancha seleccionado.', 'warning');
       return false;
     }
-    if (this.fechaReserva == '') {
+    if (this.fechaSeleccionadas == '') {
       this.msg.show('No existe fecha de reserva.', 'warning');
       return false;
     }
-    if (this.horasSeleccionadas.length == 0) {
+    if (this.horarios.length == 0) {
       this.msg.show('No existe horarios seleccionados.', 'warning');
       return false;
     }
-    return true; 
-  } */
+    return true;
+  }
 }

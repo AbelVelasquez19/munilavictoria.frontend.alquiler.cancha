@@ -46,8 +46,10 @@
             <select
               [(ngModel)]="tipoDocumento"
               (change)="onTipoDocumentoChange()"
+              [disabled]="idReserva!==0 && linkPago !==''"
               name="tipoDocumento"
               class="w-full pl-10 pr-3 py-1.5 text-sm rounded-md border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition"
+              [ngClass]="idReserva!==0 && linkPago !=='' ? 'bg-gray-100' : ''"
             >
               <option value="01">DNI</option>
               <option value="04">C/E</option>
@@ -72,6 +74,8 @@
               [(ngModel)]="numeroDocumento"
               [attr.maxlength]="maxLength"
               (input)="onNumeroDocumentoInput($event)"
+              [disabled]="idReserva!==0 && linkPago !==''"
+              [ngClass]="idReserva!==0 && linkPago !=='' ? 'bg-gray-100' : ''"
               name="numeroDocumento"
               class="w-full pl-10 pr-3 py-1.5 text-sm rounded-md border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition"
             />
@@ -92,6 +96,8 @@
             <input
               [(ngModel)]="telefono"
               (input)="onNumeroTelefonoInput($event)"
+              [disabled]="idReserva!==0 && linkPago !==''"
+              [ngClass]="idReserva!==0 && linkPago !=='' ? 'bg-gray-100' : ''"
               name="telefono"
               type="text"
               placeholder="999333416"
@@ -109,6 +115,8 @@
             type="text"
             placeholder="Silvia"
             [(ngModel)]="nombre"
+            [disabled]="idReserva!==0 && linkPago !==''"
+            [ngClass]="idReserva!==0 && linkPago !=='' ? 'bg-gray-100' : ''"
             name="nombre"
             class="w-full px-3 py-1.5 text-sm rounded-md border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition"
           />
@@ -122,6 +130,8 @@
           <input
             type="text"
             [(ngModel)]="paterno"
+            [disabled]="idReserva!==0 && linkPago !==''"
+            [ngClass]="idReserva!==0 && linkPago !=='' ? 'bg-gray-100' : ''"
             name="paterno"
             placeholder="Silva"
             class="w-full px-3 py-1.5 text-sm rounded-md border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition"
@@ -136,6 +146,8 @@
           <input
             type="text"
             [(ngModel)]="materno"
+            [disabled]="idReserva!==0 && linkPago !==''"
+            [ngClass]="idReserva!==0 && linkPago !=='' ? 'bg-gray-100' : ''"
             name="materno"
             placeholder="Arrellano"
             class="w-full px-3 py-1.5 text-sm rounded-md border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition"
@@ -156,10 +168,33 @@
             <input
               type="email"
               [(ngModel)]="correo"
+              [disabled]="idReserva!==0 && linkPago !==''"
+              [ngClass]="idReserva!==0 && linkPago !=='' ? 'bg-gray-100' : ''"
               name="correo"
               placeholder="felixjsa@gmail.com"
               class="w-full pl-10 pr-3 py-1.5 text-sm rounded-md border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition"
             />
+          </div>
+        </div>
+        
+        <!-- link de pago  -->
+        <div class="md:col-span-2 lg:col-span-3" *ngIf="linkPago!==''">
+          <label class="block text-xs font-medium text-gray-600 mb-1">
+            Link de pago generado
+          </label>
+          <div class="relative">
+            <span
+              class="material-icons absolute left-3 top-1 text-white text-[18px]"
+            >
+              link
+            </span>
+            <input
+              type="text"
+              [value]="linkPago"
+              readonly
+              class="w-full pl-10 pr-3 py-1.5 text-sm rounded-md border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition bg-red-400 text-white"
+            />
+           <span class="text-gray-400 text-[12px] ">Copiar link de pago y enviarlo al administrado para que pueda realizar el pago.</span>
           </div>
         </div>
       </div>
@@ -178,6 +213,7 @@
 
       <button
         (click)="RegistrarComplejoAdmin()"
+        *ngIf="idReserva==0 && linkPago ==''"
         class="px-4 py-2 text-sm rounded-md bg-blue-600 hover:bg-blue-700 text-white transition cursor-pointer"
       >
         Guardar
