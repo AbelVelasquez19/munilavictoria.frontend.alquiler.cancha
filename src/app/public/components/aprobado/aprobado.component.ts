@@ -1,4 +1,4 @@
-import { DecimalPipe, NgIf, NgForOf } from '@angular/common';
+import { DecimalPipe, NgIf, NgForOf, DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgxQrcodeStylingComponent, Options, DotType, CornerSquareType, CornerDotType } from 'ngx-qrcode-styling';
 import { IPagoAprobadoResponse } from '../../../core/interfaz/pago';
@@ -20,7 +20,29 @@ export class AprobadoComponent {
   @Input() authRawJson: any;
   @Output() cerrar = new EventEmitter<void>();
   
+  transcationDate: string = '';
+
   constructor(private router: Router) {}
+
+  ngOnChanges() {
+    if (this.authRawJson && this.authRawJson.dataMap && this.authRawJson.dataMap.TRANSACTION_DATE) {
+      const timestamp = this.authRawJson.dataMap.TRANSACTION_DATE;
+      this.transcationDate = this.formatFechaNiubiz(timestamp);    
+    }
+  }
+
+  formatFechaNiubiz(fecha: string | undefined): string {
+    if (!fecha) return '';
+
+    const year = '20' + fecha.substring(0, 2);
+    const month = fecha.substring(2, 4);       
+    const day = fecha.substring(4, 6);        
+    const hour = fecha.substring(6, 8);     
+    const minute = fecha.substring(8, 10);   
+    const second = fecha.substring(10, 12); 
+
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  }
 
   public cerrarModal() {
     this.cerrar.emit();

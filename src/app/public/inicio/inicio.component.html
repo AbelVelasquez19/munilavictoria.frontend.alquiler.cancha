@@ -1,5 +1,4 @@
 <!-- HEADER -->
-<!-- HEADER -->
 <header
   class="bg-white border-b border-gray-200 fixed top-0 left-0 w-full z-50 shadow-sm"
 >
@@ -163,3 +162,9 @@
   (cerrar)="cerrarModalRechazado()"
 >
 </app-rechazado>
+
+<app-error-procesar-pago
+  [visibleError]="mostrarModalErrorProcesarPago"
+  (cerrar)="cerrarModalErrorProcesarPago()"
+>
+</app-error-procesar-pago>

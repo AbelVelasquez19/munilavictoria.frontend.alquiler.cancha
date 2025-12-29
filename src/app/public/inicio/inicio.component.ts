@@ -10,6 +10,7 @@ import { AprobadoComponent } from '../components/aprobado/aprobado.component';
 import { RechazadoComponent } from "../components/rechazado/rechazado.component";
 import { PagoService } from '../../core/service/pago.service';
 import { IPagoAprobadoResponse, IPagoRechazadoResponse } from '../../core/interfaz/pago';
+import { ErrorProcesarPagoComponent } from '../components/error-procesar-pago/error-procesar-pago.component';
 
 @Component({
   selector: 'app-inicio',
@@ -22,7 +23,8 @@ import { IPagoAprobadoResponse, IPagoRechazadoResponse } from '../../core/interf
     MessageComponent,
     AprobadoComponent,
     RechazadoComponent,
-    RouterModule
+    RouterModule,
+    ErrorProcesarPagoComponent
   ],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.css'
@@ -68,12 +70,19 @@ export class InicioComponent {
     this.route.queryParams.subscribe(params => {
       const tid = params['tid'];
       this.tid = params['tid'];
+      if(tid=="process_payment"){
+        this.mostrarModalErrorProcesarPago = 'ERROR';
+        return;
+      }
       if (tid) {
         this.listarResultadoPago(tid);
       } else {
+        console.log('No se encontró el parámetro tid en la URL');
       }
     });
   }
+
+  mostrarModalErrorProcesarPago: string = '';
 
   cerrarModalRechazado() {
     this.mostrarModalRechazado = '';
@@ -81,6 +90,10 @@ export class InicioComponent {
 
   cerrarModalAprobado() {
     this.mostarModalAprobado = '';
+  }
+
+  cerrarModalErrorProcesarPago() {
+    this.mostrarModalErrorProcesarPago = '';
   }
 
   public cerrarRegistrarReserva() {

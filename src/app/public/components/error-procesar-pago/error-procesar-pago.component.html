@@ -1,0 +1,93 @@
+<div
+  *ngIf="visibleError"
+  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto"
+>
+  <div
+    class="bg-white w-full max-w-md rounded-3xl shadow-2xl animate-fadeInUp overflow-hidden ring-1 ring-black/5"
+  >
+
+    <!-- HEADER -->
+    <div class="bg-amber-500 text-white p-6 flex items-center gap-4">
+      <div
+        class="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center"
+      >
+        <!-- ICON WARNING -->
+        <svg
+          class="h-8 w-8"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v3m0 4h.01M10.29 3.86l-8.15 14.1A2 2 0 004.15 21h15.7a2 2 0 001.71-3.04L13.71 3.86a2 2 0 00-3.42 0z"
+          />
+        </svg>
+      </div>
+
+      <div>
+        <h1 class="text-xl font-semibold">NO SE PUDO COMPLETAR EL PAGO</h1>
+        <p class="text-white/90 text-sm">
+          Ocurrió un inconveniente durante el proceso
+        </p>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="p-6 bg-gray-50">
+
+      <p class="text-gray-700 text-sm mb-4">
+        Por el momento no fue posible procesar su pago.  
+        <strong>No se realizó ningún cargo a su tarjeta.</strong>
+      </p>
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- INFO -->
+      <div class="mb-5 text-sm text-gray-700 space-y-2">
+        <p>Este inconveniente puede deberse a:</p>
+
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Una interrupción temporal del servicio de pagos.</li>
+          <li>Problemas de conexión al momento de procesar la operación.</li>
+          <li>Alta demanda en la plataforma.</li>
+        </ul>
+      </div>
+
+      <div class="border-t border-dashed border-gray-400 mb-5"></div>
+
+      <!-- RECOMMENDATIONS -->
+      <div class="text-sm text-gray-700 space-y-2">
+        <p class="font-semibold">¿Qué puede hacer?</p>
+        <p>• Espere unos minutos y vuelva a intentar el pago.</p>
+        <p>• Verifique su conexión a internet.</p>
+        <p>• Si el problema persiste, intente más tarde.</p>
+      </div>
+
+      <p class="text-xs text-gray-500 mt-4 italic">
+        Si el inconveniente continúa, puede comunicarse con la entidad para recibir apoyo.
+      </p>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="p-4 bg-white flex justify-end gap-3">
+      <!-- <button
+        class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg shadow transition cursor-pointer"
+        (click)="reintentarPago()"
+      >
+        Reintentar
+      </button> -->
+
+      <button
+        class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-gray-800 rounded-lg shadow transition cursor-pointer"
+        (click)="cerrarModalError()"
+      >
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+</div>
+

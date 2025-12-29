@@ -1,0 +1,264 @@
+<div class="mb-8">
+  <h2 class="text-3xl font-extrabold text-gray-800 tracking-tight">
+    Administrar canchas deportivas
+  </h2>
+  <p class="text-gray-500 mt-1 text-sm">
+    Aquí podrás administrar la información de las canchas deportivas.
+  </p>
+</div>
+
+<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+  <!-- TÍTULO -->
+  <div class="flex items-center gap-2 mb-4">
+    <span class="material-icons text-blue-600">filter_alt</span>
+    <h3 class="text-sm font-semibold text-gray-800">Filtros de búsqueda</h3>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
+    <!-- COMPLEJO -->
+    <div class="relative">
+      <span
+        class="material-icons absolute left-3 top-2.5 text-gray-400 text-[18px]"
+      >
+        location_city
+      </span>
+      <select
+        [(ngModel)]="filtroIdComplejo"
+        (change)="onChangeComplejo($event)"
+        class="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
+      >
+        <option [ngValue]="null">Complejo</option>
+        <option *ngFor="let complejo of dataComplejos.data" [value]="complejo.idComplejo">{{ complejo.nombre }}</option>
+      </select>
+    </div>
+
+    <!-- CANCHA -->
+    <div class="relative">
+      <span
+        class="material-icons absolute left-3 top-2.5 text-gray-400 text-[18px]"
+      >
+        sports_soccer
+      </span>
+      <select
+        [(ngModel)]="filtroIdCancha"
+        class="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
+      >
+        <option [ngValue]="null">Cancha</option>
+        <option *ngFor="let cancha of dataCanchas.data" [value]="cancha.idCancha">{{ cancha.nombre }}</option>
+      </select>
+    </div>
+
+    <!-- DÍA -->
+    <div class="relative">
+      <span
+        class="material-icons absolute left-3 top-2.5 text-gray-400 text-[18px]"
+      >
+        calendar_month
+      </span>
+      <select
+       [(ngModel)]="filtroDiaSemana"
+        class="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"  
+      >
+        <option [ngValue]="null">Día</option>
+        <option value="1">Lunes</option>
+        <option value="2">Martes</option>
+        <option value="3">Miércoles</option>
+        <option value="4">Jueves</option>
+        <option value="5">Viernes</option>
+        <option value="6">Sábado</option>
+        <option value="7">Domingo</option>
+        <option value="0">Feriado / Especial</option>
+      </select>
+    </div>
+
+    <!-- TIPO HORARIO -->
+    <div class="relative">
+      <span
+        class="material-icons absolute left-3 top-2.5 text-gray-400 text-[18px]"
+      >
+        schedule
+      </span>
+      <select
+          [(ngModel)]="filtroTipoHorario"
+        class="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
+      >
+        <option [ngValue]="null">Tipo horario</option>
+        <option value="D">Día</option>
+        <option value="N">Noche</option>
+      </select>
+    </div>
+
+    <!-- ESTADO -->
+    <div class="relative">
+      <span
+        class="material-icons absolute left-3 top-2.5 text-gray-400 text-[18px]"
+      >
+        toggle_on
+      </span>
+      <select
+        [(ngModel)]="filtroEstado"
+        class="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
+      >
+        <option [ngValue]="null">Estado</option>
+        <option [ngValue]="1">Activo</option>
+        <option [ngValue]="0">Inactivo</option>
+      </select>
+    </div>
+
+    <!-- BOTÓN BUSCAR -->
+    <div class="flex items-center">
+      <button
+        (click)="buscarTarifa()"
+        class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition cursor-pointer"
+      >
+        <span class="material-icons text-sm">search</span>
+        Buscar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 overflow-x-auto mt-3"
+>
+  <!-- TABLA -->
+  <div class="sm:mx-0 overflow-x-auto sm:overflow-visible w-105 md:w-full">
+    <table
+      class="min-w-[680px] sm:min-w-full border-collapse text-xs sm:text-sm"
+    >
+      <thead>
+        <tr class="bg-blue-100 text-blue-900 text-[11px] sm:text-xs uppercase">
+          <th class="px-3 py-1 text-center">Acciones</th>
+          <th class="px-3 py-1 text-left">Complejo</th>
+          <th class="px-3 py-1 text-left">cancha</th>
+          <th class="px-3 py-1 text-left">día</th>
+          <th class="px-3 py-1 text-left">Rango</th>
+          <th class="px-3 py-1 text-left">Turno</th>
+          <th class="px-3 py-1 text-left">Precio</th>
+          <th class="px-3 py-1 text-left">Tipo</th>
+          <th class="px-3 py-1 text-left">tasa</th>
+          <th class="px-3 py-1 text-left">Estado</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-200">
+        <!-- FILA 1 -->
+        <tr
+          class="hover:bg-blue-50 transition cursor-pointer"
+          *ngFor="let item of dataListaTarifa.data"
+        >
+          <td class="px-3 py-0.5 text-center">
+            <div class="inline-flex items-center gap-1">
+              <button
+                (click)="abrirModalEditarTarifa(item.idTarifa)"
+                class="w-6 h-6 flex items-center justify-center rounded border border-blue-300 text-blue-600 hover:bg-blue-50 cursor-pointer"
+                title="Editar"
+              >
+                <span class="material-icons text-[13px]">edit</span>
+              </button>
+              <button
+                (click)="
+                  actualizarEstadoTarifa(
+                    item.idTarifa,
+                    item.estado === '1' ? 0 : 1
+                  )
+                "
+                class="w-6 h-6 flex items-center justify-center rounded border hover:bg-red-50 cursor-pointer"
+                [ngClass]="
+                  item.estado === '1'
+                    ? 'border-red-300 text-red-600'
+                    : 'border-green-300 text-green-600'
+                "
+                title="Eliminar"
+              >
+                <span class="material-icons text-[13px]">
+                  {{ item.estado === "1" ? "block" : "check_circle" }}
+                </span>
+              </button>
+            </div>
+          </td>
+          <td class="px-3 py-0.5">{{ item.nombreComplejo }}</td>
+          <td class="px-3 py-0.5">{{ item.nombreCancha }}</td>
+          <td class="px-3 py-0.5 font-medium whitespace-nowrap">
+            {{ item.diaDescripcion }}
+          </td>
+          <td class="px-3 py-0.5 whitespace-nowrap">{{ item.rangoHorario }}</td>
+          <td class="px-3 py-0.5">{{ item.turno }}</td>
+          <td class="px-3 py-0.5">{{ item.precio }}</td>
+          <td class="px-3 py-0.5">{{ item.tipoTasa }}</td>
+          <td class="px-3 py-0.5">{{ item.codTasa }}</td>
+          <td class="px-3 py-2 text-center">
+            <div class="flex items-center justify-center gap-2">
+              <span
+                class="w-2.5 h-2.5 rounded-full"
+                [ngClass]="{
+                  'bg-green-500': item.estado === '1',
+                  'bg-red-500': item.estado !== '1'
+                }"
+              ></span>
+
+              <span
+                class="text-xs font-semibold"
+                [ngClass]="{
+                  'text-green-700': item.estado === '1',
+                  'text-red-700': item.estado !== '1'
+                }"
+              >
+                {{ item.estadoDescripcion }}
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- PAGINACIÓN -->
+  <div class="flex justify-between items-center mt-3">
+    <p class="text-xs text-gray-500">
+      Mostrando {{ desdeRegistro }} - {{ hastaRegistro }} de
+      {{ totalRegistros }} tarifas
+    </p>
+
+    <div class="flex items-center gap-1 text-xs">
+      <button
+        (click)="cambiarPagina(paginaActual - 1)"
+        [disabled]="paginaActual === 1"
+        class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded bg-gray-100 hover:bg-gray-200 cursor-pointer"
+      >
+        <span class="material-icons text-[14px]">chevron_left</span>
+      </button>
+
+      <button
+        *ngFor="let p of paginasVisibles"
+        (click)="cambiarPagina(p)"
+        class="w-7 h-7 flex items-center justify-center border border-blue-600 rounded bg-blue-600 text-white font-medium cursor-pointer"
+        [ngClass]="{
+          'border-blue-600 bg-blue-600 text-white font-medium':
+            paginaActual === p,
+          'border-gray-300 bg-white hover:bg-gray-100': paginaActual !== p
+        }"
+      >
+        {{ p }}
+      </button>
+
+      <button
+        (click)="cambiarPagina(paginaActual + 1)"
+        [disabled]="paginaActual === totalPaginas"
+        class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded bg-gray-100 hover:bg-gray-200 cursor-pointer"
+      >
+        <span class="material-icons text-[14px]">chevron_right</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-registrar-tarifa
+  [abrirModal]="abrirModalRegistrarTarifa"
+  (cerrar)="cerrarModalRegistrarTarifa()"
+  [dataTarifa]="dataMostrarTarifa"
+  (registrado)="onTallerRegistrado()"
+></app-registrar-tarifa>
+
+<app-loading *ngIf="isLoading"></app-loading>
+<app-message #msg></app-message>

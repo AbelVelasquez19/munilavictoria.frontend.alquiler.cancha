@@ -301,7 +301,6 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
           this.horarios = [];
           return;
         }
-        console.log("corregiendo horrario vencido");
         console.log(response.data);
         this.horarios = response.data.map((item: any) => ({
           id: item.idHorarioBase,
@@ -321,6 +320,7 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
   tarifaNoExiste: boolean = false;
 
   public seleccionarHorario(slot: any) {
+    console.log(slot);
     // Solo permitir si es disponible
     if (slot.estado !== 'disponible') {
       return;
@@ -741,8 +741,9 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
       this.msg.show('No se ha obtenido la tasa de la tarifa comunicar con el administrador.', 'error');
       return;
     }
-    this.registrarLog(this.sessionToken);
 
+    this.registrarLog(this.sessionToken);
+    
     (window as any).VisanetCheckout.configure({
       sessiontoken: this.sessionToken,
       channel: 'web',
@@ -750,10 +751,10 @@ export class RegistrarReservaComponent implements OnChanges, OnDestroy {
       purchasenumber: this.numeroCompra.purchaseNumber,
       amount: parseFloat(this.totalPagar.toString()),
       expirationminutes: '5',
-      timeouturl: 'http://172.16.201.248:4500/inicio',
+      timeouturl: environment.url_action+'/inicio',
       merchantlogo: 'https://web.munilavictoria.gob.pe/mlv/assets/imgs/logo.png',
       formbuttoncolor: '#0a5bd3',
-      action: `${environment.apiUrl}/niubiz/response-form?purchasenumber=${this.numeroCompra.purchaseNumber}&codigo=${this.resumenReserva.codigo}&idReserva=${this.idReserva}&descripcion=${this.resumenReserva.cancha}&tasa=${this.dataTarifa[0].codTasa}&correo=${this.correo}`,
+      action: `${environment.apiUrl}/niubiz/response-form?purchasenumber=${this.numeroCompra.purchaseNumber}&codigo=${this.resumenReserva.codigo}&idReserva=${this.idReserva}&descripcion=${this.resumenReserva.cancha}&correo=${this.correo}`,
       complete: function (params: any) {
         alert('Pago completado: ' + JSON.stringify(params));
       }

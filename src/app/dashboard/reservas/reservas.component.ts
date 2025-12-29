@@ -10,6 +10,11 @@ import { MessageComponent } from '../../shared/message/message.component';
 import { ICanchasRequest, ICanchasResponse } from '../../core/interfaz/canchas';
 import { CanchasService } from '../../core/service/canchas.service';
 import { GenerarHorariosComponent } from '../components/generar-horarios/generar-horarios.component';
+import { IReservarLiberarReservaExpirdaResponse } from '../../core/interfaz/reserva';
+import { ReservaService } from '../../core/service/reserva.service';
+import { GenerarReservaComponent } from '../components/generar-reserva/generar-reserva.component';
+import { ITarifaRequest, ITarifaResponse, TarifaDetalleResponse } from '../../core/interfaz/tarifa';
+import { TarifaService } from '../../core/service/tarifa';
 
 export interface HorarioReserva {
   rango: string;
@@ -29,7 +34,7 @@ export interface Cancha {
 @Component({
   selector: 'app-reservas',
   standalone: true,
-  imports: [FormsModule, NgClass, NgIf, NgFor, DecimalPipe, LoadingComponent, MessageComponent, GenerarHorariosComponent],
+  imports: [FormsModule, NgClass, NgIf, NgFor, DecimalPipe, LoadingComponent, MessageComponent, GenerarHorariosComponent, GenerarReservaComponent],
   templateUrl: './reservas.component.html',
   styleUrl: './reservas.component.css'
 })
@@ -47,10 +52,18 @@ export class ReservasComponent {
 
   dataListaReserva: IListarAdminReservasResponse = {} as IListarAdminReservasResponse;
 
+  abrirModalGenerarReserva: boolean = false;
+
+  horarioSeleccionado: any[] = [];
+  dataTarifa: TarifaDetalleResponse[] = [];
+  totalPagar: number = 0;
+
   constructor(
     private complejoAdminReservaService: ComplejoAdminReservaSerivice,
     private complejoService: ComplejoService,
-    private canchaService: CanchasService
+    private canchaService: CanchasService,
+    private reservaService: ReservaService,
+    private tarifaService:TarifaService
   ) { }
 
   ngOnInit() {
@@ -67,12 +80,14 @@ export class ReservasComponent {
 
     this.complejoAdminReservaService.listarReservasDeportivos(payload).subscribe({
       next: (resp: IListarAdminReservasResponse) => {
+        console.log(resp);
         this.isLoading = false;
         if (resp.status !== 'success') {
           this.msg.show('Error al listar reservas deportivas', 'error');
           return;
         }
         this.dataListaReserva = resp;
+        this.liberarReservaExpirada();
       },
       error: (err) => {
         this.isLoading = false;
@@ -135,31 +150,44 @@ export class ReservasComponent {
   }
 
   abrirModalGenerarHorarios: boolean = false;
-  
+
   public abrirModalGenerarHorariosFunc() {
     this.abrirModalGenerarHorarios = true;
   }
+
+  public abrirModalGenerarReservaFunc() {
+    if (this.horarioSeleccionado.length === 0) {
+      this.msg.show('Seleccione al menos un horario para generar la reserva.', 'warning');
+      return;
+    }
+    this.abrirModalGenerarReserva = true;
+  }
+
   public cerrarModalGenerarHorarios() {
     this.abrirModalGenerarHorarios = false;
+  }
+
+  public cerrarModalGenerarReserva() {
+    this.abrirModalGenerarReserva = false;
   }
 
   nuevoEstado: string = '';
   public cambiarEstadoHorario(idEstadoCancha: number, estado: string) {
     this.isLoading = true;
-    if(idEstadoCancha == 0 || idEstadoCancha == null){
+    if (idEstadoCancha == 0 || idEstadoCancha == null) {
       this.msg.show('ID de estado de cancha inválido', 'error');
       return;
     }
-    if(estado == 'T'){
+    if (estado == 'T') {
       this.nuevoEstado = 'D';
     }
-    if(estado == 'D'){
+    if (estado == 'D') {
       this.nuevoEstado = 'T';
     }
-    const payload:ICambiarEstadoHorarioRequest = {
+    const payload: ICambiarEstadoHorarioRequest = {
       idEstadoCancha: idEstadoCancha,
       nuevoEstado: this.nuevoEstado,
-      operador:'COMPLEJO ADMIN'
+      operador: 'COMPLEJO ADMIN'
     };
 
     this.complejoAdminReservaService.cambiarEstadoHorario(payload).subscribe({
@@ -177,7 +205,91 @@ export class ReservasComponent {
         this.msg.show('Error al cambiar estado del horario', 'error');
       }
     });
-    
+
+  }
+
+  public liberarReservaExpirada() {
+    this.reservaService.liberarReservaExpirada().subscribe({
+      next: (response: IReservarLiberarReservaExpirdaResponse) => {
+        if (response.status !== 1) {
+          return;
+        }
+      },
+      error: (error) => {
+        console.error('Error al liberar reservas expiradas:', error);
+      }
+    });
+  }
+
+  public seleccionarHorario(slot: any) {
+    if (slot.estado !== 'D') {
+      return;
+    }
+    const index = this.horarioSeleccionado.findIndex(
+      h => h.idHorarioBase === slot.idHorarioBase
+    );
+
+    if (index > -1) {
+      this.horarioSeleccionado.splice(index, 1);
+      
+      this.dataTarifa = this.dataTarifa.filter(d => d.idHorarioBase !== slot.idHorarioBase);
+      this.totalPagar = this.dataTarifa.reduce((total, item) => total + item.precio, 0);
+      
+      slot.seleccionado = false;
+    } else {
+      const horario = {
+        idHorarioBase: slot.idHorarioBase,
+        estado: slot.estado,
+        rango: slot.rango,
+        seleccionado: true
+      };
+      this.horarioSeleccionado.push(horario);
+      slot.seleccionado = true;
+
+      this.calcularTarifa(horario);
+    }
+  }
+
+  public calcularTarifa(slot: any) {
+    if (this.idCancha == 0) {
+      this.msg.show('Seleccione una cancha.', 'warning');
+      return;
+    }
+    if (this.fechaSeleccionada === '') {
+      this.msg.show('Seleccione una fecha de reserva.', 'warning');
+      return;
+    }
+    if (this.horarioSeleccionado.length === 0) {
+      this.msg.show('Seleccione al menos un horario.', 'warning');
+      return;
+    }
+    const payload: ITarifaRequest = {
+      idCancha: this.idCancha,
+      fecha: this.fechaSeleccionada,
+      horarios: slot.idHorarioBase.toString()
+    };
+    this.isLoading = true;
+    this.tarifaService.calcularTarifa(payload).subscribe({
+      next: (response: ITarifaResponse) => {
+        this.isLoading = false;
+        if (response.status == 0) {
+          this.msg.show(response.message, 'warning');
+          slot.seleccionado = false;
+          this.horarioSeleccionado = this.horarioSeleccionado.filter(h => h.idHorarioBase !== slot.idHorarioBase);
+          return;
+        }
+        this.agregarDatataTarifa(response.detalles);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.msg.show('Error al calcular la tarifa.', 'error');
+      }
+    });
+  }
+
+  private agregarDatataTarifa(nuevaData: TarifaDetalleResponse[]) {
+    this.dataTarifa = [...this.dataTarifa, ...nuevaData];
+    this.totalPagar = this.dataTarifa.reduce((total, item) => total + item.precio, 0);
   }
 
 }
