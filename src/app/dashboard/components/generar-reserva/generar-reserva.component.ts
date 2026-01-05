@@ -8,6 +8,7 @@ import { ComplejoAdminSerivice } from '../../../core/service/comAdmin.service';
 import { TarifaDetalleResponse } from '../../../core/interfaz/tarifa';
 import { IReservaRegistrarRequest, IReservaRegistrarResponse } from '../../../core/interfaz/reserva';
 import { ReservaService } from '../../../core/service/reserva.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-generar-reserva',
@@ -232,7 +233,7 @@ export class GenerarReservaComponent {
           btoa(this.idCanchaSeleccionada.toString())
         );
 
-        this.linkPago = `http://172.16.201.248:4500/pago-pendiente/${idReservaEncoded}/${idCanchaEncoded}`;
+        this.linkPago = `${environment.url_action}/pago-pendiente/${idReservaEncoded}/${idCanchaEncoded}`;
         this.msg.show('Reserva registrada correctamente, Por favor, utilice el link de pago generado.', 'success');
         this.registrado.emit();
       },
