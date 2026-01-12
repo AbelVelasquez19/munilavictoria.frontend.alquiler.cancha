@@ -15,6 +15,7 @@ import { ReservaService } from '../../core/service/reserva.service';
 import { GenerarReservaComponent } from '../components/generar-reserva/generar-reserva.component';
 import { ITarifaRequest, ITarifaResponse, TarifaDetalleResponse } from '../../core/interfaz/tarifa';
 import { TarifaService } from '../../core/service/tarifa';
+import { GenerarTallerComponent } from "../components/generar-taller/generar-taller.component";
 
 export interface HorarioReserva {
   rango: string;
@@ -34,7 +35,7 @@ export interface Cancha {
 @Component({
   selector: 'app-reservas',
   standalone: true,
-  imports: [FormsModule, NgClass, NgIf, NgFor, DecimalPipe, LoadingComponent, MessageComponent, GenerarHorariosComponent, GenerarReservaComponent],
+  imports: [FormsModule, NgClass, NgIf, NgFor, DecimalPipe, LoadingComponent, MessageComponent, GenerarHorariosComponent, GenerarReservaComponent, GenerarTallerComponent],
   templateUrl: './reservas.component.html',
   styleUrl: './reservas.component.css'
 })
@@ -53,6 +54,7 @@ export class ReservasComponent {
   dataListaReserva: IListarAdminReservasResponse = {} as IListarAdminReservasResponse;
 
   abrirModalGenerarReserva: boolean = false;
+  abrirModalGenerarTaller: boolean = false;
 
   horarioSeleccionado: any[] = [];
   dataTarifa: TarifaDetalleResponse[] = [];
@@ -166,12 +168,20 @@ export class ReservasComponent {
     this.abrirModalGenerarReserva = true;
   }
 
+  public abrirModalTallerMasivoFunc() {
+    this.abrirModalGenerarTaller = true;
+  }
+
   public cerrarModalGenerarHorarios() {
     this.abrirModalGenerarHorarios = false;
   }
 
   public cerrarModalGenerarReserva() {
     this.abrirModalGenerarReserva = false;
+  }
+
+  public cerrarModalGenerarTaller() {
+    this.abrirModalGenerarTaller = false;
   }
 
   nuevoEstado: string = '';

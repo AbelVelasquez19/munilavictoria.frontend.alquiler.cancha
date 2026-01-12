@@ -58,6 +58,13 @@
       <span class="material-icons text-sm">event_available</span>
       Generar Reserva
     </button>
+    <button
+      (click)="abrirModalTallerMasivoFunc()"
+      class="flex items-center justify-center gap-1 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium px-3 py-2 rounded-lg shadow-sm transition cursor-pointer"
+    >
+      <span class="material-icons text-sm">swipe_up</span>
+      Generar Talleres
+    </button>
   </div>
   <div class="flex flex-col sm:flex-row sm:justify-end sm:items-center gap-2 mb-4">
     <div class="mt-4 flex flex-wrap gap-4 text-sm font-medium text-gray-700">
@@ -195,3 +202,8 @@
   [fechaSeleccionadas]="fechaSeleccionada"
   (registrado)="buscarReservas()"
 ></app-generar-reserva>
+
+<app-generar-taller
+  [abrirModal]="abrirModalGenerarTaller"
+  (cerrar)="cerrarModalGenerarTaller()"
+></app-generar-taller>

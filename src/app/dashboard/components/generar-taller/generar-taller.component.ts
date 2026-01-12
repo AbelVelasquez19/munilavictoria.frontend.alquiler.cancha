@@ -1,22 +1,22 @@
-import { Component, EventEmitter, Input, Output, ViewChild, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MessageComponent } from '../../../shared/message/message.component';
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { LoadingComponent } from '../../../shared/loading/loading.component';
 import { FormsModule } from '@angular/forms';
-import { IcomplejoRequest, IComplejoResponse } from '../../../core/interfaz/Complejo';
 import { ComplejoService } from '../../../core/service/complejo.service';
-import { ICanchasRequest } from '../../../core/interfaz/canchas';
 import { CanchasService } from '../../../core/service/canchas.service';
-import { ComplejoAdminReservaSerivice } from '../../../core/service/comAdminReservas';
-import { IHorarioMasivoRequest, IHorarioMasivoResponse } from '../../../core/interfaz/comAdminReservas';
+import { IcomplejoRequest, IComplejoResponse } from '../../../core/interfaz/Complejo';
+import { ICanchasRequest } from '../../../core/interfaz/canchas';
+import { ReservaService } from '../../../core/service/reserva.service';
+import { IReservaGeneralResponse, IReservaTallerMasivoRequest } from '../../../core/interfaz/reserva';
 
 @Component({
-  selector: 'app-generar-horarios',
+  selector: 'app-generar-taller',
   imports: [NgIf, MessageComponent, LoadingComponent, FormsModule, DatePipe, NgFor, NgClass],
-  templateUrl: './generar-horarios.component.html',
-  styleUrl: './generar-horarios.component.css'
+  templateUrl: './generar-taller.component.html',
+  styleUrl: './generar-taller.component.css'
 })
-export class GenerarHorariosComponent {
+export class GenerarTallerComponent {
   @Input() abrirModal: boolean = false;
   @Output() cerrar = new EventEmitter<void>();
   @ViewChild('msg') msg!: MessageComponent;
@@ -54,7 +54,7 @@ export class GenerarHorariosComponent {
   constructor(
     private complejoService: ComplejoService,
     private srvCancha: CanchasService,
-    private comAdminReservaService: ComplejoAdminReservaSerivice
+    private reservaServicio: ReservaService
   ) { }
 
   cerrarModal() {
@@ -151,20 +151,6 @@ export class GenerarHorariosComponent {
   minDate: string = '';
   maxDate: string = '';
 
-  /*  private establecerRangoDeFechas() {
-     const hoy = new Date();
-     const max = new Date();
- 
-     // 8 días hacia adelante
-     max.setDate(hoy.getDate() + 9);
- 
-     // Convertir a formato YYYY-MM-DD
-     this.minDate = hoy.toISOString().split('T')[0];
-     this.maxDate = max.toISOString().split('T')[0];
- 
-     console.log("MIN:", this.minDate, "MAX:", this.maxDate);
-   } */
-
   private establecerRangoDeFechas() {
     const hoy = new Date();
 
@@ -186,25 +172,7 @@ export class GenerarHorariosComponent {
 
     console.log('RANGO:', this.minDate, this.maxDate);
   }
-
-  /* prevMonth() {
-    this.mesActual--;
-    if (this.mesActual < 0) {
-      this.mesActual = 11;
-      this.anioActual--;
-    }
-    this.generarCalendario();
-  }
-
-  nextMonth() {
-    this.mesActual++;
-    if (this.mesActual > 11) {
-      this.mesActual = 0;
-      this.anioActual++;
-    }
-    this.generarCalendario();
-  } */
-
+  
   prevMonth() {
     this.mesActual--;
     if (this.mesActual < 0) {
@@ -296,8 +264,7 @@ export class GenerarHorariosComponent {
     return fechaISO >= this.minDate && fechaISO <= this.maxDate;
   }
 
-
-  public generarHorarios() {
+  public generarTallerMasivo() {
     if (!this.idComplejo || this.idComplejo === 0) {
       this.msg.show('Seleccione un complejo', 'warning');
       return;
@@ -312,38 +279,39 @@ export class GenerarHorariosComponent {
     }
     const listaCanchas = this.canchasSeleccionadas.map(c => c.idCancha).join(',');
     const listaFechas = this.listaFechas.join(',');
-    console.log(this.idComplejo)
-    console.log(listaCanchas)
-    console.log(listaFechas)
+    const horaInicio = this.rangoHoraInicio;
+    const horaFin = this.rangoHoraFin;
     this.isLoading = true;
-    const payload: IHorarioMasivoRequest = {
-      idComplejo: this.idComplejo,
+    const payload: IReservaTallerMasivoRequest = {
       listaCanchas,
       listaFechas,
-      operador: 'COMPLEJO ADMIN'
+      horaInicio,
+      horaFin
     };
-    this.comAdminReservaService.generarHorariosMasivos(payload).subscribe({
-      next: (res: IHorarioMasivoResponse) => {
+    // Reemplazar con el servicio real para generar talleres masivos
+    this.reservaServicio.marcarTallerMasivo(payload).subscribe({ 
+      next: (res: IReservaGeneralResponse) => {
+        console.log(res);
         this.isLoading = false;
-        if (res.status !== 'success') {
+        if (res.status !== 1) {
           this.isLoading = false;
-          this.msg.show('Error generando horarios: ' + res.message, 'error');
+          this.msg.show('Error generando talleres: ' + res.message, 'error');
           this.isAllSelected = false;
           return;
-        }
+        } 
         this.resetForm();
         this.isAllSelected = false;
         this.listaFechas = [];
         this.actualizarVistaPrevia();
-        /*   this.cerrarModal(); */
-        this.msg.show(res.data.message, 'success');
+        this.msg.show(res.message, 'success');
       },
       error: () => {
         this.isLoading = false;
-        this.msg.show('Error generando horarios', 'error');
+        this.msg.show('Error generando talleres', 'error');
       }
     });
   }
+
 
   private resetForm() {
     this.idComplejo = 0;

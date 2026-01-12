@@ -54,3 +54,15 @@ export interface IReservarLiberarReservaExpirdaResponse {
     status:number;
     message:string;
 }
+
+export interface IReservaGeneralResponse{
+    status:number;
+    message:string;
+}
+
+export interface IReservaTallerMasivoRequest{
+    listaCanchas:string;
+    listaFechas:string;
+    horaInicio:string;
+    horaFin:string;
+}

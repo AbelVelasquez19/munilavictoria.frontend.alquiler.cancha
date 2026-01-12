@@ -156,27 +156,10 @@
             />
             Seleccionar todas las fechas disponibles
           </label>
-
-          <!-- FECHAS SELECCIONADAS -->
-          <!-- <div class="mt-3 flex flex-wrap gap-2">
-            <span
-              *ngFor="let f of listaFechas; let i = index"
-              class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs flex items-center gap-1"
-            >
-              {{ f }}
-              <span
-                class="material-icons text-[14px] cursor-pointer"
-                (click)="eliminarFecha(i)"
-              >
-                close
-              </span>
-            </span>
-          </div> -->
         </div>
         <!-- end Calendario -->
 
         <!-- VISTA PREVIA -->
-
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
           <h2
             class="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2"
@@ -188,7 +171,7 @@
           </h2>
 
           <div
-            class="bg-gray-50 border border-gray-200 rounded-lg p-4 max-h-80 overflow-y-auto space-y-4"
+            class="bg-gray-50 border border-gray-200 rounded-lg p-4 max-h-80 overflow-y-auto"
           >
             <!-- MENSAJE SI NO HAY DATOS -->
             <p
@@ -201,74 +184,102 @@
               aquí.
             </p>
 
-            <!-- COMPLEJO -->
-            <div *ngIf="idComplejo" class="flex items-start gap-2">
-              <span class="material-icons text-blue-600 text-[20px]"
-                >home_work</span
-              >
-              <div>
-                <p class="text-sm font-semibold text-gray-800">
-                  Complejo seleccionado:
-                </p>
-                <p class="text-sm text-gray-700">
-                  {{ complejoSeleccionado?.nombre }}
-                </p>
-              </div>
-            </div>
-
-            <!-- CANCHAS -->
-            <div *ngIf="canchasSeleccionadas.length > 0">
-              <p class="text-sm font-semibold text-gray-800 mb-1">
-                Canchas seleccionadas ({{ canchasSeleccionadas.length }}):
-              </p>
-              <ul class="list-disc ml-5 text-xs text-gray-700">
-                <li *ngFor="let c of canchasSeleccionadas">{{ c.nombre }}</li>
-              </ul>
-            </div>
-
-            <!-- FECHAS -->
-            <div *ngIf="listaFechas.length > 0">
-              <p class="text-sm font-semibold text-gray-800 mb-1">
-                Fechas seleccionadas ({{ listaFechas.length }}):
-              </p>
-              <ul class="list-disc ml-5 text-xs text-gray-700">
-                <li *ngFor="let fecha of listaFechas">
-                  {{ fecha | date : "dd/MM/yyyy" }}
-                </li>
-              </ul>
-            </div>
-
-            <!-- RANGO HORARIO (si existe) -->
-            <div *ngIf="rangoHoraInicio && rangoHoraFin">
-              <p class="text-sm font-semibold text-gray-800">Rango horario:</p>
-              <p class="text-xs text-gray-700">
-                {{ rangoHoraInicio }} – {{ rangoHoraFin }} (duración por bloque
-                {{ duracionBloque }} min)
-              </p>
-            </div>
-
-            <!-- RESUMEN DE CÁLCULOS -->
+            <!-- GRID -->
             <div
-              class="bg-white border border-gray-300 rounded-lg p-3 shadow-sm"
+              *ngIf="listaFechas.length > 0 && canchasSeleccionadas.length > 0"
+              class="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
-              <p class="text-sm font-semibold text-gray-800 mb-2">Resumen:</p>
+              <!-- COLUMNA IZQUIERDA -->
+              <div class="space-y-3">
+                <!-- COMPLEJO -->
+                <div *ngIf="idComplejo" class="flex items-start gap-2">
+                  <span class="material-icons text-blue-600 text-[20px]"
+                    >home_work</span
+                  >
+                  <div>
+                    <p class="text-sm font-semibold text-gray-800">
+                      Complejo seleccionado
+                    </p>
+                    <p class="text-sm text-gray-700">
+                      {{ complejoSeleccionado?.nombre }}
+                    </p>
+                  </div>
+                </div>
 
-              <p class="text-xs text-gray-600">
-                • Horarios por día/cancha:
-                <span class="font-semibold">{{ cantidadBloquesPorDia }}</span>
-              </p>
+                <!-- CANCHAS -->
+                <div>
+                  <p class="text-sm font-semibold text-gray-800 mb-1">
+                    Canchas seleccionadas ({{ canchasSeleccionadas.length }})
+                  </p>
+                  <ul class="list-disc ml-5 text-xs text-gray-700 space-y-0.5">
+                    <li *ngFor="let c of canchasSeleccionadas">
+                      {{ c.nombre }}
+                    </li>
+                  </ul>
+                </div>
 
-              <p class="text-xs text-gray-600">
-                • Combinaciones (canchas × fechas):
-                <span class="font-semibold">{{ totalCombinaciones }}</span>
-              </p>
+                <!-- FECHAS -->
+                <div>
+                  <p class="text-sm font-semibold text-gray-800 mb-1">
+                    Fechas seleccionadas ({{ listaFechas.length }})
+                  </p>
+                  <ul class="list-disc ml-5 text-xs text-gray-700 space-y-0.5">
+                    <li *ngFor="let fecha of listaFechas">
+                      {{ fecha | date : "dd/MM/yyyy" }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
 
-              <p class="text-xs text-gray-600">
-                • Total de horarios que se generarán:
-                <span class="font-semibold text-blue-700">{{
-                  totalHorariosFinal
-                }}</span>
-              </p>
+              <!-- COLUMNA DERECHA -->
+              <div class="space-y-4">
+                <!-- RANGO HORARIO -->
+                <div>
+                  <p class="text-sm font-semibold text-gray-800 mb-1">
+                    Rango horario
+                  </p>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="time"
+                      [(ngModel)]="rangoHoraInicio"
+                      class="w-full text-sm text-gray-700 px-2 py-1 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <span class="text-gray-500 text-sm">a</span>
+                    <input
+                      type="time"
+                      [(ngModel)]="rangoHoraFin"
+                      class="w-full text-sm text-gray-700 px-2 py-1 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <!-- RESUMEN NUMÉRICO -->
+                <div class="bg-white border border-gray-200 rounded-lg p-3">
+                  <p class="text-sm font-semibold text-gray-800 mb-2">
+                    Resumen
+                  </p>
+                  <ul class="text-xs text-gray-700 space-y-1">
+                    <li>
+                      • Horarios por día/cancha:
+                      <span class="font-semibold">{{
+                        cantidadBloquesPorDia
+                      }}</span>
+                    </li>
+                    <li>
+                      • Combinaciones (canchas × fechas):
+                      <span class="font-semibold">{{
+                        totalCombinaciones
+                      }}</span>
+                    </li>
+                    <li>
+                      • Total de horarios a generar:
+                      <span class="font-semibold text-blue-600">
+                        {{ totalHorariosFinal }}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -286,7 +297,7 @@
           Cancelar
         </button>
         <button
-          (click)="generarHorarios()"
+          (click)="generarTallerMasivo()"
           class="bg-blue-600 ml-5 cursor-pointer hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition"
         >
           Generar Horarios

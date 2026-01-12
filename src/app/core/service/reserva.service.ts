@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from "../../../environments/environment";
 import { Observable } from "rxjs";
-import { IReservaCancelarRequest, IReservaDetalleRequest, IReservaDetalleResponse, IReservaRegistrarRequest, IReservaRegistrarResponse, IReservarLiberarReservaExpirdaResponse } from '../interfaz/reserva';
+import { IReservaCancelarRequest, IReservaDetalleRequest, IReservaDetalleResponse, IReservaGeneralResponse, IReservaRegistrarRequest, IReservaRegistrarResponse, IReservarLiberarReservaExpirdaResponse, IReservaTallerMasivoRequest } from '../interfaz/reserva';
 
 @Injectable({ providedIn: 'root' })
 export class ReservaService {
@@ -25,6 +25,10 @@ export class ReservaService {
 
     public liberarReservaExpirada():Observable<IReservarLiberarReservaExpirdaResponse> {
         return this.http.get<IReservarLiberarReservaExpirdaResponse>(`${this.apiUrl}/liberar-reserva-expirada`);
+    }
+
+    public marcarTallerMasivo(payload:IReservaTallerMasivoRequest):Observable<IReservaGeneralResponse> {
+        return this.http.post<IReservaGeneralResponse>(`${this.apiUrl}/marcar-taller-masivo`, payload); 
     }
 
     //1 TEMPORAL → cuando el usuario entra a pagar
